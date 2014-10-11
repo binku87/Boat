@@ -60,12 +60,19 @@
     if ([dom objectForKey:@"width"] == NULL || [dom objectForKey:@"height"] == NULL) {
         CGFloat startX = 0;
         CGFloat startY = 0;
-        CGSize textSpace = [text sizeWithFont:[self fontFor:uid] constrainedToSize:CGSizeMake(self.winWidth, 300) lineBreakMode:NSLineBreakByWordWrapping];
+        NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+        NSDictionary *attributes = @{NSFontAttributeName: [self fontFor:uid],
+                                     NSParagraphStyleAttributeName: paragraphStyle };
+        CGRect textSpace = [text boundingRectWithSize:CGSizeMake(self.winWidth, 300)
+                                              options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                           attributes:attributes
+                                              context:nil];
         NSString *leftAttr = [dom objectForKey:@"left"];
-        if (leftAttr) startX += [self calVal:leftAttr width:textSpace.width height:textSpace.height];
+        if (leftAttr) startX += [self calVal:leftAttr width:textSpace.size.width height:textSpace.size.height];
         NSString *topAttr = [dom objectForKey:@"top"];
-        if (topAttr) startY += [self calVal:topAttr width:textSpace.width height:textSpace.height];
-        rect = CGRectMake(startX, startY, textSpace.width, textSpace.height);
+        if (topAttr) startY += [self calVal:topAttr width:textSpace.size.width height:textSpace.size.height];
+        rect = CGRectMake(startX, startY, textSpace.size.width, textSpace.size.height);
         [self saveCalRect:dom rect:rect];
     } else {
         rect = [self rectFor:uid];

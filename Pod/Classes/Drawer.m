@@ -26,7 +26,12 @@
     UIFont *font = [styleParser fontFor:uid];
     UIColor *color = [styleParser colorFor:uid];
     [color set];
-    [text drawInRect:rect withFont:font lineBreakMode:NSLineBreakByWordWrapping];
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+    NSDictionary *attributes = @{NSFontAttributeName: font,
+                                 NSForegroundColorAttributeName: color,
+                                 NSParagraphStyleAttributeName: paragraphStyle };
+    [text drawInRect:rect withAttributes:attributes];
 }
 
 - (void) drawImage:(NSString *)fileName css:(NSString *)uid
