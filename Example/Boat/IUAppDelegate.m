@@ -19,6 +19,9 @@
     [self.window addSubview:view];
     [self.window makeKeyAndVisible];
     return YES;
+    
+    //[Router redirectTo:"signIn" layout:"normal"];
+    //[Router redirectTo:"signIn" layout:"normal_with_layout"];
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
