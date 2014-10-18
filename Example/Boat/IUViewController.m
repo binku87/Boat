@@ -7,7 +7,6 @@
 //
 
 #import "IUViewController.h"
-#import "SignInView.h"
 
 @interface IUViewController ()
 
@@ -20,8 +19,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    SignInView *signInView = [[SignInView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.view addSubview:signInView];
+    //SignInView *signInView = [[SignInView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    //[self.view addSubview:signInView];
 }
 
 - (void)didReceiveMemoryWarning

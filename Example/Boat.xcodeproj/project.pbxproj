@@ -7,22 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		34395F3719E98BA800D43049 /* SignIn.ss in Resources */ = {isa = PBXBuildFile; fileRef = 34395F3619E98BA800D43049 /* SignIn.ss */; };
-		34395F3A19E98BD400D43049 /* SignInView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34395F3919E98BD400D43049 /* SignInView.m */; };
-		34395F4C19E98E3600D43049 /* login-confirm.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4019E98E3600D43049 /* login-confirm.png */; };
-		34395F4D19E98E3600D43049 /* login-confirm@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4119E98E3600D43049 /* login-confirm@2x.png */; };
-		34395F4E19E98E3600D43049 /* login-password-input-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4219E98E3600D43049 /* login-password-input-bg.png */; };
-		34395F4F19E98E3600D43049 /* login-password-input-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4319E98E3600D43049 /* login-password-input-bg@2x.png */; };
-		34395F5019E98E3600D43049 /* login-password.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4419E98E3600D43049 /* login-password.png */; };
-		34395F5119E98E3600D43049 /* login-password@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4519E98E3600D43049 /* login-password@2x.png */; };
-		34395F5219E98E3600D43049 /* login-register-confirm.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4619E98E3600D43049 /* login-register-confirm.png */; };
-		34395F5319E98E3600D43049 /* login-register-confirm@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4719E98E3600D43049 /* login-register-confirm@2x.png */; };
-		34395F5419E98E3600D43049 /* login-username-input-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4819E98E3600D43049 /* login-username-input-bg.png */; };
-		34395F5519E98E3600D43049 /* login-username-input-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4919E98E3600D43049 /* login-username-input-bg@2x.png */; };
-		34395F5619E98E3600D43049 /* login-username.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4A19E98E3600D43049 /* login-username.png */; };
-		34395F5719E98E3600D43049 /* login-username@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F4B19E98E3600D43049 /* login-username@2x.png */; };
-		34395F5A19E98EAE00D43049 /* login-register.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F5819E98EAE00D43049 /* login-register.png */; };
-		34395F5B19E98EAE00D43049 /* login-register@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34395F5919E98EAE00D43049 /* login-register@2x.png */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -52,23 +36,6 @@
 
 /* Begin PBXFileReference section */
 		04734CEB5C24717348D72A4A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		34395F3619E98BA800D43049 /* SignIn.ss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SignIn.ss; sourceTree = "<group>"; };
-		34395F3819E98BD400D43049 /* SignInView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignInView.h; sourceTree = "<group>"; };
-		34395F3919E98BD400D43049 /* SignInView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignInView.m; sourceTree = "<group>"; };
-		34395F4019E98E3600D43049 /* login-confirm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-confirm.png"; sourceTree = "<group>"; };
-		34395F4119E98E3600D43049 /* login-confirm@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-confirm@2x.png"; sourceTree = "<group>"; };
-		34395F4219E98E3600D43049 /* login-password-input-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-password-input-bg.png"; sourceTree = "<group>"; };
-		34395F4319E98E3600D43049 /* login-password-input-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-password-input-bg@2x.png"; sourceTree = "<group>"; };
-		34395F4419E98E3600D43049 /* login-password.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-password.png"; sourceTree = "<group>"; };
-		34395F4519E98E3600D43049 /* login-password@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-password@2x.png"; sourceTree = "<group>"; };
-		34395F4619E98E3600D43049 /* login-register-confirm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-register-confirm.png"; sourceTree = "<group>"; };
-		34395F4719E98E3600D43049 /* login-register-confirm@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-register-confirm@2x.png"; sourceTree = "<group>"; };
-		34395F4819E98E3600D43049 /* login-username-input-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-username-input-bg.png"; sourceTree = "<group>"; };
-		34395F4919E98E3600D43049 /* login-username-input-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-username-input-bg@2x.png"; sourceTree = "<group>"; };
-		34395F4A19E98E3600D43049 /* login-username.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-username.png"; sourceTree = "<group>"; };
-		34395F4B19E98E3600D43049 /* login-username@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-username@2x.png"; sourceTree = "<group>"; };
-		34395F5819E98EAE00D43049 /* login-register.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-register.png"; sourceTree = "<group>"; };
-		34395F5919E98EAE00D43049 /* login-register@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login-register@2x.png"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* Boat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -124,44 +91,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		34395F3319E98B4A00D43049 /* Public */ = {
-			isa = PBXGroup;
-			children = (
-				34395F3B19E98D9400D43049 /* Images */,
-				34395F3519E98B5C00D43049 /* CSS */,
-			);
-			name = Public;
-			sourceTree = "<group>";
-		};
-		34395F3519E98B5C00D43049 /* CSS */ = {
-			isa = PBXGroup;
-			children = (
-				34395F3619E98BA800D43049 /* SignIn.ss */,
-			);
-			name = CSS;
-			sourceTree = "<group>";
-		};
-		34395F3B19E98D9400D43049 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				34395F5819E98EAE00D43049 /* login-register.png */,
-				34395F5919E98EAE00D43049 /* login-register@2x.png */,
-				34395F4019E98E3600D43049 /* login-confirm.png */,
-				34395F4119E98E3600D43049 /* login-confirm@2x.png */,
-				34395F4219E98E3600D43049 /* login-password-input-bg.png */,
-				34395F4319E98E3600D43049 /* login-password-input-bg@2x.png */,
-				34395F4419E98E3600D43049 /* login-password.png */,
-				34395F4519E98E3600D43049 /* login-password@2x.png */,
-				34395F4619E98E3600D43049 /* login-register-confirm.png */,
-				34395F4719E98E3600D43049 /* login-register-confirm@2x.png */,
-				34395F4819E98E3600D43049 /* login-username-input-bg.png */,
-				34395F4919E98E3600D43049 /* login-username-input-bg@2x.png */,
-				34395F4A19E98E3600D43049 /* login-username.png */,
-				34395F4B19E98E3600D43049 /* login-username@2x.png */,
-			);
-			name = Images;
-			sourceTree = "<group>";
-		};
 		6003F581195388D10070C39A = {
 			isa = PBXGroup;
 			children = (
@@ -199,13 +128,10 @@
 		6003F593195388D20070C39A /* Boat */ = {
 			isa = PBXGroup;
 			children = (
-				34395F3819E98BD400D43049 /* SignInView.h */,
-				34395F3919E98BD400D43049 /* SignInView.m */,
 				6003F59C195388D20070C39A /* IUAppDelegate.h */,
 				6003F59D195388D20070C39A /* IUAppDelegate.m */,
 				6003F5A5195388D20070C39A /* IUViewController.h */,
 				6003F5A6195388D20070C39A /* IUViewController.m */,
-				34395F3319E98B4A00D43049 /* Public */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 			);
@@ -344,23 +270,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34395F5A19E98EAE00D43049 /* login-register.png in Resources */,
-				34395F4E19E98E3600D43049 /* login-password-input-bg.png in Resources */,
-				34395F5719E98E3600D43049 /* login-username@2x.png in Resources */,
-				34395F5319E98E3600D43049 /* login-register-confirm@2x.png in Resources */,
-				34395F4C19E98E3600D43049 /* login-confirm.png in Resources */,
-				34395F5619E98E3600D43049 /* login-username.png in Resources */,
-				34395F4D19E98E3600D43049 /* login-confirm@2x.png in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
-				34395F5119E98E3600D43049 /* login-password@2x.png in Resources */,
-				34395F4F19E98E3600D43049 /* login-password-input-bg@2x.png in Resources */,
-				34395F5B19E98EAE00D43049 /* login-register@2x.png in Resources */,
-				34395F5219E98E3600D43049 /* login-register-confirm.png in Resources */,
-				34395F5519E98E3600D43049 /* login-username-input-bg@2x.png in Resources */,
-				34395F5019E98E3600D43049 /* login-password.png in Resources */,
-				34395F3719E98BA800D43049 /* SignIn.ss in Resources */,
-				34395F5419E98E3600D43049 /* login-username-input-bg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,7 +355,6 @@
 			files = (
 				6003F59E195388D20070C39A /* IUAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* IUViewController.m in Sources */,
-				34395F3A19E98BD400D43049 /* SignInView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
