@@ -7,13 +7,13 @@
 
 @end
 
-@implementation HelloWordController
+@implementation HelloWorldController
 
 - (id)init
 {
     if (self) {
         self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        self.viewHelloWord = [[HelloWordView alloc] initWithFrame:self.view.frame];
+        self.viewHelloWord = [[HelloWorldView alloc] initWithFrame:self.view.frame];
         [self.view addSubview:self.viewHelloWord];
     }
     return self;
