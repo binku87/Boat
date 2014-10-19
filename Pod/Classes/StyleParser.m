@@ -18,6 +18,12 @@
     return self;
 }
 
+- (id) valueFor:(NSString *)uid attr:(NSString *)attr
+{
+    NSMutableDictionary *dom = [domMap objectForKey:uid];
+    return [dom objectForKey:attr];
+}
+
 - (CGRect) rectFor:(NSString *)uid
 {
     CGFloat startX = 0;
@@ -50,6 +56,7 @@
     }
     CGRect rect = CGRectMake(startX, startY, width, height);
     [self saveCalRect:dom rect:rect];
+    NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, width, height);
     return rect;
 }
 
@@ -73,6 +80,7 @@
         NSString *topAttr = [dom objectForKey:@"top"];
         if (topAttr) startY += [self calVal:topAttr width:textSpace.size.width height:textSpace.size.height];
         rect = CGRectMake(startX, startY, textSpace.size.width, textSpace.size.height);
+        NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, textSpace.size.width, textSpace.size.height);
         [self saveCalRect:dom rect:rect];
     } else {
         rect = [self rectFor:uid];
@@ -139,6 +147,7 @@
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"width" withString:[NSString stringWithFormat:@"%f", width]];
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"height" withString:[NSString stringWithFormat:@"%f", height]];
     NSExpression *expression = [NSExpression expressionWithFormat:attrVal];
+    NSLog(@"Boat: [StyleParser] %@", expression);
     id result = [expression expressionValueWithObject:nil context:nil];
     return [result floatValue];
 }
@@ -161,6 +170,11 @@
     NSString *file = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
     NSString *fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     NSArray *allLinedStrings = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    if (allLinedStrings == nil) {
+        NSString *message = [NSString stringWithFormat:@"Style file %@ doesn't exist", cssFile];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Info" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+        [alertView show];
+    }
     NSMutableDictionary *dom;
     for (NSString *line in allLinedStrings) {
         BOOL isCommentOrBlankLine = [line hasPrefix:@"//"] || [[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqual:@""];

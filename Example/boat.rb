@@ -6,7 +6,7 @@ class XCodeStructGenerator
   def initialize(project_name)
     @project_path = `pwd`.sub("\n", "")
     puts "Current Project Path is #{@project_path}, please confirm it is correct. (Enther 'y')"
-    if true #gets.chomp == "y"
+    if gets.chomp == "y"
       @project_name = project_name
       @project = Xcodeproj::Project.open("#{project_name}.xcodeproj")
       generate
@@ -14,7 +14,11 @@ class XCodeStructGenerator
   end
 
   def main_group
-    @project.groups[1]
+    @project.groups.select { |group| group.files.map(&:path).include?("AppDelegate.h") }[0]
+  end
+
+  def main_target
+    @project.targets.select { |t| t.name == @project_name }[0]
   end
 
   def template_dir
@@ -27,7 +31,9 @@ class XCodeStructGenerator
       FileUtils.cp("#{file_template_dir}/#{file_name}", file_dir)
       file = File.new(file_path)
       x_file = group.new_file(file)
-      @project.targets.first.add_file_references([x_file]) if file_name =~ /\.m$/
+      main_target.add_file_references([x_file]) if file_name =~ /\.m$/
+      main_target.add_resources([x_file]) if file_name =~ /\.ss$/
+      main_target.add_resources([x_file]) if file_name =~ /\.png$/
     end
   end
 
@@ -78,4 +84,24 @@ class XCodeStructGenerator
   end
 end
 
-XCodeStructGenerator.new("Boat")
+puts "Please input project name:"
+project_name = gets.chomp
+XCodeStructGenerator.new(project_name)
+
+=begin
+
+1. Create a new project
+2. gem install cococapod
+3. pod init
+4. Add `pod 'Boat', :path => '/Users/bin/Codes/iphone/Boat'`
+5. pod install
+6. open ProjectName.xcworkspace
+7. Add to AppDelegate.rb
+    #import <Boat/Router.h>
+
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    [Router redirectTo:@"HelloWorld" params:nil];
+    [self.window makeKeyAndVisible];
+
+=end

@@ -20,17 +20,28 @@
     return self;
 }
 
-- (void) drawRect:(NSString *)uid
+- (CGRect) drawRect:(NSString *)uid
 {
     CGRect rect = [styleParser rectFor:uid];
     UIColor *color = [styleParser colorFor:uid];
     CGContextRef context = UIGraphicsGetCurrentContext();
-    const CGFloat* colors = CGColorGetComponents(color.CGColor);
-    CGContextSetRGBFillColor(context, colors[0], colors[1], colors[2], 1.0);
-    CGContextFillRect(context, rect);
+    if ([[styleParser valueFor:uid attr:@"fill"] isEqualToString:@"0"]) {
+        NSString *radius = [styleParser valueFor:uid attr:@"radius"];
+        if (radius == nil) {
+            radius = @"2";
+        }
+        UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:[radius intValue]];
+        CGContextSetStrokeColorWithColor(context, color.CGColor);
+        [bezierPath stroke];
+    } else {
+        const CGFloat* colors = CGColorGetComponents(color.CGColor);
+        CGContextSetRGBFillColor(context, colors[0], colors[1], colors[2], 1.0);
+        CGContextFillRect(context, rect);
+    }
+    return rect;
 }
 
-- (void) drawText:(NSString *)text css:(NSString *)uid
+- (CGRect) drawText:(NSString *)text css:(NSString *)uid
 {
     CGRect rect = [styleParser rectForText:text uid:uid];
     UIFont *font = [styleParser fontFor:uid];
@@ -42,13 +53,16 @@
                                  NSForegroundColorAttributeName: color,
                                  NSParagraphStyleAttributeName: paragraphStyle };
     [text drawInRect:rect withAttributes:attributes];
+    return rect;
 }
 
-- (void) drawImage:(NSString *)fileName css:(NSString *)uid
+- (CGRect) drawImage:(NSString *)fileName css:(NSString *)uid
 {
+    CGRect rect = [styleParser rectFor:uid];
     NSArray *fileAttrs = [fileName componentsSeparatedByString:@"."];
     UIImage *img = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]]];
-    [img drawInRect:[styleParser rectFor:uid]];
+    [img drawInRect:rect];
+    return rect;
 }
 
 - (UITextField*) genTextInput:(NSString *)placeholder css:(NSString *)uid

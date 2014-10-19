@@ -15,9 +15,9 @@
 @property (nonatomic, retain) StyleParser *styleParser;
 
 - (id) initWithStyleFile:(NSString *)cssFile;
-- (void) drawRect:(NSString *)uid;
-- (void) drawText:(NSString *)text css:(NSString *)uid;
-- (void) drawImage:(NSString *)fileName css:(NSString *)uid;
+- (CGRect) drawRect:(NSString *)uid;
+- (CGRect) drawText:(NSString *)text css:(NSString *)uid;
+- (CGRect) drawImage:(NSString *)fileName css:(NSString *)uid;
 - (UITextField*) genTextInput:(NSString *)placeholder css:(NSString *)uid;
 - (ImageButton*) genImageButton:(NSString *)fileName css:(NSString *)uid;
 

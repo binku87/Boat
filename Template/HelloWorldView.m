@@ -16,7 +16,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"SignIn.ss"];
+    Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"HelloWorld.ss"];
     [drawer drawText:@"Boat" css:@"title"];
 
     [drawer drawImage:@"login-username-input-bg.png" css:@"text_input_name_wrap"];
