@@ -11,5 +11,6 @@
 @interface BoatViewController : UIViewController
 
 - (NSString *) layoutName;
+- (void) refreshView;
 
 @end

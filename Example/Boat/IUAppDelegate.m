@@ -8,6 +8,8 @@
 
 #import "IUAppDelegate.h"
 #import "HelloWorldView.h"
+#import <Boat/Router.h>
+#import "ApplicationController.h"
 
 @implementation IUAppDelegate
 
@@ -15,8 +17,10 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
-    HelloWorldView *view = [[HelloWorldView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.window addSubview:view];
+    //HelloWorldView *view = [[HelloWorldView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [Router redirectTo:@"HelloWorld" params:nil];
+    //ApplicationController *applicationController = [[ApplicationController alloc] init];
+    //[self.window addSubview:applicationController.view];
     [self.window makeKeyAndVisible];
     return YES;
     

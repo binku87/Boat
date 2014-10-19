@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 binku. All rights reserved.
 //
 
-#import "LayoutController.h"
+#import <Boat/BoatLayoutController.h>
 
-@interface ApplicationController : LayoutController
+@interface ApplicationController : BoatLayoutController
 
 @end

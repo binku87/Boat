@@ -20,6 +20,16 @@
     return self;
 }
 
+- (void) drawRect:(NSString *)uid
+{
+    CGRect rect = [styleParser rectFor:uid];
+    UIColor *color = [styleParser colorFor:uid];
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    const CGFloat* colors = CGColorGetComponents(color.CGColor);
+    CGContextSetRGBFillColor(context, colors[0], colors[1], colors[2], 1.0);
+    CGContextFillRect(context, rect);
+}
+
 - (void) drawText:(NSString *)text css:(NSString *)uid
 {
     CGRect rect = [styleParser rectForText:text uid:uid];

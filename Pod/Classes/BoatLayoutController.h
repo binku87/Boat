@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BoatViewController.h"
 
-@interface LayoutController : BoatViewController
+@interface BoatLayoutController : BoatViewController
 
 @property (nonatomic, assign) UIView *viewContent;
 

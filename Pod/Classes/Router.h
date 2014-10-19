@@ -11,6 +11,6 @@
 
 @interface Router : NSObject
 
-+ (void) redirectTo:(NSString *)viewControllerName;
++ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params;
 
 @end

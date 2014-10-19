@@ -8,19 +8,28 @@
 
 #import "Router.h"
 #import "BoatViewController.h"
+#import "BoatLayoutController.h"
 
 @implementation Router
 
 static NSMutableDictionary *loadedControllers;
 
-+ (void) redirectTo:(NSString *)viewControllerName
++ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params
 {
-    BoatViewController *layoutController;
+    BoatLayoutController *layoutController;
     BoatViewController *contentController = [Router controllerByName:viewControllerName];
-    NSString *layoutName = [contentController layoutName];
+    NSString *layoutName = @"";
+    if ([contentController respondsToSelector:@selector(layoutName)]) {
+        layoutName = [contentController layoutName];
+    }
     if ([layoutName isEqual:@""]) {
     } else {
-        layoutController = [Router controllerByName:layoutName];
+        layoutController = (BoatLayoutController *)[Router controllerByName:layoutName];
+        [[self mainWindow] bringSubviewToFront:layoutController.view];
+        [layoutController switchToView:contentController.view];
+        if ([contentController respondsToSelector:@selector(refreshView)]) {
+            [contentController refreshView];
+        }
     }
 }
 
@@ -29,12 +38,23 @@ static NSMutableDictionary *loadedControllers;
     viewControllerName = [viewControllerName stringByAppendingString:@"Controller"];
     BoatViewController *viewController;
     if ([loadedControllers objectForKey:viewControllerName]) {
+        viewController = [loadedControllers objectForKey:viewControllerName];
+    } else {
         viewController = [[NSClassFromString(viewControllerName) alloc] init];
         [loadedControllers setObject:viewController forKey:viewControllerName];
-    } else {
-        viewController = [loadedControllers objectForKey:viewControllerName];
+        [[self mainWindow] addSubview:viewController.view];
+    }
+    if (viewController == nil) {
+        NSString *message = [NSString stringWithFormat:@"Controller %@ can't found", viewControllerName];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Info" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+        [alertView show];
     }
     return viewController;
+}
+
++ (UIWindow *) mainWindow
+{
+    return [[[UIApplication sharedApplication] delegate] window];
 }
 
 @end

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1A0BE1E7B5B4C11DCEDAF91C /* HelloWorldView.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A0AD717211DB53B783D0A /* HelloWorldView.m */; };
 		342A9E9B19F2C6FE001DC8C7 /* ApplicationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 342A9E9A19F2C6FE001DC8C7 /* ApplicationController.m */; };
+		342A9EA719F357D4001DC8C7 /* ApplicationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 342A9EA619F357D4001DC8C7 /* ApplicationView.m */; };
+		342A9EAA19F35B60001DC8C7 /* Application.ss in Resources */ = {isa = PBXBuildFile; fileRef = 342A9EA819F35B60001DC8C7 /* Application.ss */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -22,7 +24,7 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		7202F4BC1F71AF66ABBE1C43 /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 708E7DD1D6AF8D93F496E533 /* libPods-Tests.a */; };
-		DA40FBC61A789F9FF8989933 /* libPods-Boat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97EA804394B480FC01BEBABC /* libPods-Boat.a */; };
+		D5216EFB0A614029D2CABC83 /* libPods-Boat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97EA804394B480FC01BEBABC /* libPods-Boat.a */; };
 		F0DDE6C8F6A8C270AF02F995 /* HelloWorldController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80A051AAEFE972C893221C4D /* HelloWorldController.m */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +46,10 @@
 		28EEBCAE321E77AD1753723E /* HelloWorldView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = HelloWorldView.h; path = Views/HelloWorldView.h; sourceTree = "<group>"; };
 		342A9E9919F2C6FE001DC8C7 /* ApplicationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationController.h; path = Controller/ApplicationController.h; sourceTree = "<group>"; };
 		342A9E9A19F2C6FE001DC8C7 /* ApplicationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApplicationController.m; path = Controller/ApplicationController.m; sourceTree = "<group>"; };
+		342A9E9F19F2CD0B001DC8C7 /* libPods-Boat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-Boat.a"; path = "Pods/build/Debug-iphoneos/libPods-Boat.a"; sourceTree = "<group>"; };
+		342A9EA519F357D4001DC8C7 /* ApplicationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationView.h; path = Views/ApplicationView.h; sourceTree = "<group>"; };
+		342A9EA619F357D4001DC8C7 /* ApplicationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApplicationView.m; path = Views/ApplicationView.m; sourceTree = "<group>"; };
+		342A9EA819F35B60001DC8C7 /* Application.ss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Application.ss; sourceTree = "<group>"; };
 		4DB3FD71457637CDCE8373E9 /* login-password-input-bg.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "login-password-input-bg.png"; path = "Public/Images/login-password-input-bg.png"; sourceTree = "<group>"; };
 		596132E7F420EA42C8F94457 /* login-register.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "login-register.png"; path = "Public/Images/login-register.png"; sourceTree = "<group>"; };
 		5BD3547F484ECCA39340E0F1 /* login-password.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "login-password.png"; path = "Public/Images/login-password.png"; sourceTree = "<group>"; };
@@ -94,7 +100,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				DA40FBC61A789F9FF8989933 /* libPods-Boat.a in Frameworks */,
+				D5216EFB0A614029D2CABC83 /* libPods-Boat.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +139,8 @@
 		342A9E9419F2C698001DC8C7 /* Layout */ = {
 			isa = PBXGroup;
 			children = (
+				342A9EA519F357D4001DC8C7 /* ApplicationView.h */,
+				342A9EA619F357D4001DC8C7 /* ApplicationView.m */,
 			);
 			name = Layout;
 			sourceTree = "<group>";
@@ -170,6 +178,7 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				342A9E9F19F2CD0B001DC8C7 /* libPods-Boat.a */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
@@ -249,6 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				D05778681F90D6E295672478 /* HelloWord.ss */,
+				342A9EA819F35B60001DC8C7 /* Application.ss */,
 			);
 			name = Stylesheets;
 			sourceTree = "<group>";
@@ -400,6 +410,7 @@
 			files = (
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				342A9EAA19F35B60001DC8C7 /* Application.ss in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,6 +495,7 @@
 				6003F59E195388D20070C39A /* IUAppDelegate.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				F0DDE6C8F6A8C270AF02F995 /* HelloWorldController.m in Sources */,
+				342A9EA719F357D4001DC8C7 /* ApplicationView.m in Sources */,
 				1A0BE1E7B5B4C11DCEDAF91C /* HelloWorldView.m in Sources */,
 				342A9E9B19F2C6FE001DC8C7 /* ApplicationController.m in Sources */,
 			);
@@ -608,6 +620,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Boat/Boat-Prefix.pch";
 				INFOPLIST_FILE = "Boat/Boat-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -622,6 +638,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Boat/Boat-Prefix.pch";
 				INFOPLIST_FILE = "Boat/Boat-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

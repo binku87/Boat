@@ -28,6 +28,9 @@
     return @"";
 }
 
+- (void) refreshView {
+}
+
 /*
 #pragma mark - Navigation
 
