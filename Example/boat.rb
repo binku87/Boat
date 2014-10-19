@@ -45,13 +45,17 @@ class XCodeStructGenerator
       group = self.find_or_add_group(group_name, main_group)
       case group_name
       when "Controller"
-        controller_group = self.find_or_add_group("HelloWorld", group)
-        self.add_file(controller_group, "#{real_dir_path}/HelloWorldController.h")
-        self.add_file(controller_group, "#{real_dir_path}/HelloWorldController.m")
+        ["HelloWorld", "Application"].each do |controller_name|
+          controller_group = self.find_or_add_group(controller_name, group)
+          self.add_file(controller_group, "#{real_dir_path}/#{controller_name}Controller.h")
+          self.add_file(controller_group, "#{real_dir_path}/#{controller_name}Controller.m")
+        end
       when "Views"
-        view_group = self.find_or_add_group("HelloWorld", group)
-        self.add_file(view_group, "#{real_dir_path}/HelloWorldView.h")
-        self.add_file(view_group, "#{real_dir_path}/HelloWorldView.m")
+        ["HelloWorld", "Application"].each do |view_name|
+          view_group = self.find_or_add_group(view_name, group)
+          self.add_file(view_group, "#{real_dir_path}/#{view_name}View.h")
+          self.add_file(view_group, "#{real_dir_path}/#{view_name}View.m")
+        end
       when "Public"
         ["Stylesheets", "Images"].each do |g_name|
           _group = self.find_or_add_group(g_name, group)
