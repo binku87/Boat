@@ -56,6 +56,8 @@
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-password-input-bg.png</string>
 			<key>path</key>
@@ -83,6 +85,8 @@
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-username-input-bg@2x.png</string>
 			<key>path</key>
@@ -96,6 +100,8 @@
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-password.png</string>
 			<key>path</key>
@@ -166,6 +172,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-register-confirm@2x.png</string>
 			<key>path</key>
@@ -200,6 +208,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-password-input-bg@2x.png</string>
 			<key>path</key>
@@ -238,6 +248,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
 			<key>name</key>
 			<string>HelloWord.ss</string>
 			<key>path</key>
@@ -352,7 +364,7 @@ fi
 				<string>6003F590195388D20070C39A</string>
 				<string>6003F592195388D20070C39A</string>
 				<string>6003F58E195388D20070C39A</string>
-				<string>D5216EFB0A614029D2CABC83</string>
+				<string>8C43DCE01D7E3BCD3067B54C</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -1317,6 +1329,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-password@2x.png</string>
 			<key>path</key>
@@ -1404,6 +1418,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-register@2x.png</string>
 			<key>path</key>
@@ -1411,12 +1427,21 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>8C43DCE01D7E3BCD3067B54C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>97EA804394B480FC01BEBABC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>8DB3C45EEE26AC7F8C6EEE3A</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-username-input-bg.png</string>
 			<key>path</key>
@@ -1488,6 +1513,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
 			<key>name</key>
 			<string>Application.ss</string>
 			<key>path</key>
@@ -1501,6 +1528,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-register.png</string>
 			<key>path</key>
@@ -1536,6 +1565,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-username@2x.png</string>
 			<key>path</key>
@@ -1564,6 +1595,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-register-confirm.png</string>
 			<key>path</key>
@@ -1592,6 +1625,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-confirm@2x.png</string>
 			<key>path</key>
@@ -1642,13 +1677,6 @@ fi
 			<string>Views/HelloWorldView.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D5216EFB0A614029D2CABC83</key>
-		<dict>
-			<key>fileRef</key>
-			<string>97EA804394B480FC01BEBABC</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>D893BCDA65DA3B9B9422D231</key>
 		<dict>
@@ -1702,6 +1730,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-username.png</string>
 			<key>path</key>
@@ -1772,6 +1802,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
 			<key>name</key>
 			<string>login-confirm.png</string>
 			<key>path</key>

@@ -1,0 +1,1 @@
+../../../AFNetworking-Synchronous/AFHTTPRequestOperation+ResponseObject.h

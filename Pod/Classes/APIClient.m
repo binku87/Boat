@@ -15,6 +15,16 @@
 //#import "Route.h"
 //#import "System.h"
 
+#define API_SUCCESS 200
+#define API_UNAUTHORIZED 401
+#define API_FAILURE 500
+#define API_ERROR_AUTH_FAILURE 401
+#define API_ERROR_FAILURE 500
+#define AUTH_FAILURE @"Re-Authorization Required"
+#define AUTH_REQUIRED @"Authorization Required"
+#define INT_VAL(...) ((NSNumber *)__VA_ARGS__).intValue
+#define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
+
 static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
 //static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.1.127:3000";
 //static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.0.99:3000";
