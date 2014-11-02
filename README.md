@@ -7,7 +7,24 @@
 
 ## Usage
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+* Create a new project
+* gem install cococapod
+* gem install rboat
+* pod init
+* Add `pod 'Boat', :path => '/Users/bin/Codes/iphone/Boat'`
+* pod install
+* open ProjectName.xcodeproj then close ProjectName.xcworkspace
+* open ProjectName.xcworkspace
+* cd to new project and run `rboat` and enter project name
+* Add below code to AppDelegate.rb
+<pre>
+    #import <Boat/Router.h>
+
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    [Router redirectTo:@"HelloWorld" params:nil];
+    [self.window makeKeyAndVisible];
+</pre>
 
 ## Requirements
 
