@@ -18,8 +18,6 @@
 #define API_SUCCESS 200
 #define API_UNAUTHORIZED 401
 #define API_FAILURE 500
-#define API_ERROR_AUTH_FAILURE 401
-#define API_ERROR_FAILURE 500
 #define AUTH_FAILURE @"Re-Authorization Required"
 #define AUTH_REQUIRED @"Authorization Required"
 #define INT_VAL(...) ((NSNumber *)__VA_ARGS__).intValue
@@ -34,7 +32,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
 + (void)login:(NSDictionary *)data success:(void (^)(id data))success failure:(void (^)(int error))failure
 {
     [[APIClient sharedClient] postPath:@"users/sign_in" parameters:data success:^(AFHTTPRequestOperation *operation, id result) {
-        /*if (INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
+        if (INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
             alert([result objectForKey:@"simple_message"]);
         } else if (INT_VAL([result objectForKey:@"status"]) == API_SUCCESS) {
             //[System setUserName:[data objectForKey:@"email_or_name"]];
@@ -44,30 +42,30 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
             }
         } else {
             alert(@"登陆失败，请重新登陆");
-        }*/
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        /*alert(@"请重新尝试");
+        alert(@"请重新尝试");
         if (failure) {
             failure(API_FAILURE);
-        }*/
+        }
     }];
 }
 
 + (void)signUp:(NSDictionary *)data success:(void (^)(id data))success failure:(void (^)(int error))failure
 {
     [[APIClient sharedClient] postPath:@"/users.json" parameters:data success:^(AFHTTPRequestOperation *operation, id data) {
-        /*if (INT_VAL([data objectForKey:@"status"]) == API_FAILURE) {
+        if (INT_VAL([data objectForKey:@"status"]) == API_FAILURE) {
             alert([data objectForKey:@"simple_message"])
         } else {
-            [System setUserName:[data objectForKey:@"user[nick_name]"]];
-            [System setPassword:[data objectForKey:@"user[password]"]];
-            [Route goToResources];
-        }*/
+            //[System setUserName:[data objectForKey:@"user[nick_name]"]];
+            //[System setPassword:[data objectForKey:@"user[password]"]];
+            //[Route goToResources];
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        /*alert(@"请重新尝试");
+        alert(@"请重新尝试");
         if (failure) {
             failure(API_FAILURE);
-        }*/
+        }
     }];
 }
 
@@ -98,10 +96,10 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
     [[APIClient sharedClient] postPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [APIClient handleResponse:result url:url method:@"Post" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        /*alert(@"请重新尝试");
+        alert(@"请重新尝试");
         if (failure) {
             failure(API_FAILURE);
-        }*/
+        }
     }];
 }
 
@@ -110,10 +108,10 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
     [[APIClient sharedClient] putPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [APIClient handleResponse:result url:url method:@"Put" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        /*alert(@"请重新尝试");
+        alert(@"请重新尝试");
         if (failure) {
             failure(API_FAILURE);
-        }*/
+        }
     }];
 }
 

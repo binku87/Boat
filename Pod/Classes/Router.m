@@ -25,10 +25,11 @@ static NSMutableDictionary *loadedControllers;
     if ([layoutName isEqual:@""]) {
     } else {
         layoutController = (BoatLayoutController *)[Router controllerByName:layoutName];
+        [layoutController refreshView:params];
         [[self mainWindow] bringSubviewToFront:layoutController.view];
         [layoutController switchToView:contentController.view];
-        if ([contentController respondsToSelector:@selector(refreshView)]) {
-            [contentController refreshView];
+        if ([contentController respondsToSelector:@selector(refreshView:)]) {
+            [contentController refreshView:params];
         }
     }
 }

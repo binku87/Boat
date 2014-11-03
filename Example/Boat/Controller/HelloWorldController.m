@@ -31,7 +31,7 @@
     return @"Application";
 }
 
-- (void) refreshView
+- (void) refreshView:(NSDictionary *)params
 {
 }
 

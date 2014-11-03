@@ -20,7 +20,7 @@
 
 - (id) valueFor:(NSString *)uid attr:(NSString *)attr
 {
-    NSMutableDictionary *dom = [domMap objectForKey:uid];
+    NSMutableDictionary *dom = [self getCombineDom:uid];
     return [dom objectForKey:attr];
 }
 
@@ -30,7 +30,7 @@
     CGFloat startY = 0;
     CGFloat width = 0;
     CGFloat height = 0;
-    NSMutableDictionary *dom = [domMap objectForKey:uid];
+    NSMutableDictionary *dom = [self getCombineDom:uid];
     if ([[dom objectForKey:@"is_updated"] isEqual:@"1"]) {
         return CGRectMake([[dom objectForKey:@"left"] floatValue],
                           [[dom objectForKey:@"top"] floatValue],
@@ -51,9 +51,6 @@
         startX += relativeDom.origin.x;
         startY += relativeDom.origin.y;
     }
-    if ([uid isEqual:@"text_input_email_wrap"]) {
-        
-    }
     CGRect rect = CGRectMake(startX, startY, width, height);
     [self saveCalRect:dom rect:rect];
     NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, width, height);
@@ -63,7 +60,7 @@
 - (CGRect) rectForText:(NSString *)text uid:(NSString *)uid
 {
     CGRect rect;
-    NSMutableDictionary *dom = [domMap objectForKey:uid];
+    NSMutableDictionary *dom = [self getCombineDom:uid];
     if ([dom objectForKey:@"width"] == NULL || [dom objectForKey:@"height"] == NULL) {
         CGFloat startX = 0;
         CGFloat startY = 0;
@@ -90,7 +87,7 @@
 
 - (UIFont *) fontFor:(NSString *)uid
 {
-    NSDictionary *dom = [domMap objectForKey:uid];
+    NSMutableDictionary *dom = [self getCombineDom:uid];
     NSString *fontAttr = [dom objectForKey:@"font-size"];
     UIFont *font = [UIFont systemFontOfSize:20];
     if (fontAttr) {
@@ -101,7 +98,7 @@
 
 - (UIColor *) colorFor:(NSString *)uid
 {
-    NSDictionary *dom = [domMap objectForKey:uid];
+    NSMutableDictionary *dom = [self getCombineDom:uid];
     NSString *colorAttr = [dom objectForKey:@"color"];
     UIColor *color = [UIColor grayColor];
     if (colorAttr) {
@@ -131,6 +128,9 @@
 {
     for (NSString *uid in [domMap allKeys]) {
         if ([attrVal rangeOfString:[NSString stringWithFormat:@"%@.", uid] options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            if ([uid isEqual:@"title"] && [attrVal isEqual:@"title.bottom"]) {
+                
+            }
             CGRect rect = [self rectFor:uid];
             CGFloat uidWidth = rect.origin.x + rect.size.width;
             CGFloat uidHeight = rect.origin.y + rect.size.height;
@@ -157,6 +157,7 @@
     if ([dom valueForKey:@"is_updated"] == NULL) {
         [dom setObject:[NSString stringWithFormat:@"%f", rect.origin.x] forKey:@"left"];
         [dom setObject:[NSString stringWithFormat:@"%f", rect.origin.y] forKey:@"top"];
+        [dom setObject:[NSString stringWithFormat:@"%f", rect.origin.y + rect.size.height] forKey:@"bottom"];
         [dom setObject:[NSString stringWithFormat:@"%f", rect.size.width] forKey:@"width"];
         [dom setObject:[NSString stringWithFormat:@"%f", rect.size.height] forKey:@"height"];
         [dom setObject:[NSString stringWithFormat:@"%i", true] forKey:@"is_updated"];
@@ -192,5 +193,13 @@
             }
         }
     }
+}
+
+- (NSMutableDictionary*) getCombineDom:(NSString *)uid {
+    NSMutableDictionary *dom = [NSMutableDictionary new];
+    for (NSString *_uid in [uid componentsSeparatedByString:@" "]) {
+        [dom addEntriesFromDictionary:[domMap objectForKey:_uid]];
+    };
+    return dom;
 }
 @end

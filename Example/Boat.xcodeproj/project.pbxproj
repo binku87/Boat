@@ -364,7 +364,7 @@ fi
 				<string>6003F590195388D20070C39A</string>
 				<string>6003F592195388D20070C39A</string>
 				<string>6003F58E195388D20070C39A</string>
-				<string>8C43DCE01D7E3BCD3067B54C</string>
+				<string>D72A85DC9C77BF50F2D75906</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -1427,13 +1427,6 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>8C43DCE01D7E3BCD3067B54C</key>
-		<dict>
-			<key>fileRef</key>
-			<string>97EA804394B480FC01BEBABC</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>8DB3C45EEE26AC7F8C6EEE3A</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -1677,6 +1670,13 @@ fi
 			<string>Views/HelloWorldView.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>D72A85DC9C77BF50F2D75906</key>
+		<dict>
+			<key>fileRef</key>
+			<string>97EA804394B480FC01BEBABC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>D893BCDA65DA3B9B9422D231</key>
 		<dict>

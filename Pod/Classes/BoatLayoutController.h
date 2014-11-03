@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BoatViewController.h"
+#import "BoatControllerProtocol.h"
 
-@interface BoatLayoutController : BoatViewController
+@interface BoatLayoutController : BoatViewController<BoatControllerProtocol>
 
 @property (nonatomic, assign) UIView *viewContent;
 

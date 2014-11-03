@@ -1,11 +1,11 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Boat', :exclusive => true do
-  pod "Boat", :path => "../"
+  pod "Boat", :path => "/Users/bin/Codes/iphone/Boat"
 end
 
 target 'Tests', :exclusive => true do
-  pod "Boat", :path => "../"
+  pod "Boat", :path => "/Users/bin/Codes/iphone/Boat"
 
   pod 'Specta', '~> 0.2.1'
   pod 'Expecta'

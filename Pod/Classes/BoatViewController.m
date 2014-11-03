@@ -28,7 +28,7 @@
     return @"";
 }
 
-- (void) refreshView {
+- (void) refreshView:(NSDictionary *) params{
 }
 
 /*

@@ -7,10 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BoatControllerProtocol.h"
 
-@interface BoatViewController : UIViewController
-
-- (NSString *) layoutName;
-- (void) refreshView;
+@interface BoatViewController : UIViewController<BoatControllerProtocol>
 
 @end

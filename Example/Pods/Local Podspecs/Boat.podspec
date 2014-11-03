@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Boat"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "Boat: A library to draw something"
   s.description      = <<-DESC
                         A library to draw something.
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "binku" => "binku87@gmail.com" }
-  s.source           = { :git => "https://github.com/binku87/Boat.git", :tag => "0.1.0" }
+  s.source           = { :git => "https://github.com/binku87/Boat.git", :tag => "0.1.1" }
   # s.social_media_url = 'https://twitter.com/binku87'
 
   s.platform     = :ios, '6.0'
