@@ -7,6 +7,9 @@
 //
 
 #import "BoatLayoutController.h"
+#import "StyleParser.h"
+
+#define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
 @interface BoatLayoutController ()
 
@@ -47,8 +50,13 @@
     if (hasThisView) {
         [self.view bringSubviewToFront:contentView];
     } else {
+        contentView.frame = [self contentRect];
         [self.view addSubview:contentView];
     }
 }
 
+- (CGRect)contentRect {
+    alert(@"WARNING: doesn't override layout's contentRect yet");
+    return CGRectMake(0, 0, 0, 0);
+}
 @end

@@ -10,7 +10,13 @@
 #import "BoatViewController.h"
 #import "BoatControllerProtocol.h"
 
-@interface BoatLayoutController : BoatViewController<BoatControllerProtocol>
+@protocol BoatLayoutControllerProtocol
+
+- (CGRect) contentRect;
+
+@end
+
+@interface BoatLayoutController : BoatViewController<BoatControllerProtocol, BoatLayoutControllerProtocol>
 
 @property (nonatomic, assign) UIView *viewContent;
 
