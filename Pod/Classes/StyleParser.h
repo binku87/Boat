@@ -22,6 +22,6 @@
 - (CGFloat) winHeight;
 - (CGFloat) calVal:(NSString *)attrVal width:(CGFloat)width height:(CGFloat)height;
 - (CGRect) rectFor:(NSString *)uid;
-- (void) saveCalRect:(NSMutableDictionary *)dom rect:(CGRect)rect;
+- (void) saveCalRectFor:(NSString *)uid rect:(CGRect)rect;
 
 @end

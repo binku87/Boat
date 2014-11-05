@@ -52,7 +52,7 @@
         startY += relativeDom.origin.y;
     }
     CGRect rect = CGRectMake(startX, startY, width, height);
-    [self saveCalRect:dom rect:rect];
+    [self saveCalRectFor:uid rect:rect];
     NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, width, height);
     return rect;
 }
@@ -78,7 +78,7 @@
         if (topAttr) startY += [self calVal:topAttr width:textSpace.size.width height:textSpace.size.height];
         rect = CGRectMake(startX, startY, textSpace.size.width, textSpace.size.height);
         NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, textSpace.size.width, textSpace.size.height);
-        [self saveCalRect:dom rect:rect];
+        [self saveCalRectFor:uid rect:rect];
     } else {
         rect = [self rectFor:uid];
     }
@@ -152,8 +152,9 @@
     return [result floatValue];
 }
 
-- (void) saveCalRect:(NSMutableDictionary *)dom rect:(CGRect)rect
+- (void) saveCalRectFor:(NSString *)uid rect:(CGRect)rect
 {
+    NSMutableDictionary *dom = [domMap objectForKey:uid];
     if ([dom valueForKey:@"is_updated"] == NULL) {
         [dom setObject:[NSString stringWithFormat:@"%f", rect.origin.x] forKey:@"left"];
         [dom setObject:[NSString stringWithFormat:@"%f", rect.origin.y] forKey:@"top"];
