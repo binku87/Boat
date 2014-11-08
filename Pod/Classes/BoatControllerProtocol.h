@@ -13,6 +13,7 @@
 
 - (NSString *) layoutName;
 - (void) refreshView:(NSDictionary *)params;
+- (NSDictionary *) layoutExtraParams;
 
 @end
 

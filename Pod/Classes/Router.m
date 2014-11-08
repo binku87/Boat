@@ -10,12 +10,17 @@
 #import "BoatViewController.h"
 #import "BoatLayoutController.h"
 
+#define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
+
 static NSMutableDictionary *loadedControllers = nil;
 
 @implementation Router
 
 + (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params
 {
+    if (params == nil) {
+        params = @{};
+    }
     BoatLayoutController *layoutController;
     BoatViewController *contentController = [Router controllerByName:viewControllerName];
     NSString *layoutName = @"";
@@ -25,17 +30,23 @@ static NSMutableDictionary *loadedControllers = nil;
     if ([layoutName isEqual:@""]) {
     } else {
         layoutController = (BoatLayoutController *)[Router controllerByName:layoutName];
-        [layoutController refreshView:params];
+        NSMutableDictionary *combineParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        [combineParams addEntriesFromDictionary:[contentController layoutExtraParams]];
+        [layoutController refreshView:combineParams];
         [[self mainWindow] bringSubviewToFront:layoutController.view];
         [layoutController switchToView:contentController.view];
         if ([contentController respondsToSelector:@selector(refreshView:)]) {
-            [contentController refreshView:params];
+            [contentController refreshView:combineParams];
         }
     }
 }
 
 + (BoatViewController *) controllerByName:(NSString *) viewControllerName
 {
+    if (viewControllerName == nil || [viewControllerName isEqual:@""]) {
+        alert(@"Router#redirectTo: controller can't be empty");
+        return nil;
+    }
     viewControllerName = [viewControllerName stringByAppendingString:@"Controller"];
     BoatViewController *viewController;
     if (loadedControllers == nil) {
@@ -50,8 +61,7 @@ static NSMutableDictionary *loadedControllers = nil;
     }
     if (viewController == nil) {
         NSString *message = [NSString stringWithFormat:@"Controller %@ can't found", viewControllerName];
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Info" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alertView show];
+        alert(message);
     }
     return viewController;
 }

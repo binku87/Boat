@@ -23,7 +23,7 @@
 #define INT_VAL(...) ((NSNumber *)__VA_ARGS__).intValue
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
-static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.0.104:3000";
+static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
 
 @implementation APIClient
 
