@@ -42,9 +42,11 @@
 -(void)switchToView:(UIView *)contentView {
     BOOL hasThisView = NO;
     for (UIView * v in [self.view subviews]) {
-        if(v.tag == contentView.tag) {
+        if(v == contentView) {
             hasThisView = YES;
             break;
+        } else {
+            [v removeFromSuperview];
         }
     }
     if (hasThisView) {

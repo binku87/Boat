@@ -10,9 +10,9 @@
 #import "BoatViewController.h"
 #import "BoatLayoutController.h"
 
-@implementation Router
+static NSMutableDictionary *loadedControllers = nil;
 
-static NSMutableDictionary *loadedControllers;
+@implementation Router
 
 + (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params
 {
@@ -38,6 +38,9 @@ static NSMutableDictionary *loadedControllers;
 {
     viewControllerName = [viewControllerName stringByAppendingString:@"Controller"];
     BoatViewController *viewController;
+    if (loadedControllers == nil) {
+        loadedControllers = [NSMutableDictionary new];
+    }
     if ([loadedControllers objectForKey:viewControllerName]) {
         viewController = [loadedControllers objectForKey:viewControllerName];
     } else {

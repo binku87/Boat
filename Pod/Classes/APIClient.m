@@ -23,9 +23,7 @@
 #define INT_VAL(...) ((NSNumber *)__VA_ARGS__).intValue
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
-static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
-//static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.1.127:3000";
-//static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.0.99:3000";
+static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.0.104:3000";
 
 @implementation APIClient
 
@@ -150,13 +148,13 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
 + (void)handleResponse:(id) result url:(NSString *)url method:(NSString *)method params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure {
     NSError *error;
     NSString *loginFailureMessage;
-    if (INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
-        NSDictionary *requestData = [NSDictionary dictionaryWithObjectsAndKeys:@"binku87@gmail.com", @"email_or_name", @"123123", @"password", nil];
+    if ([result isKindOfClass:[NSDictionary class]] && INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
+        NSDictionary *requestData = [NSDictionary dictionaryWithObjectsAndKeys:@"binku87@gmail.com", @"user[email]", @"123123123", @"user[password]", nil];
         id r = [[APIClient sharedClient] synchronouslyPostPath:@"users/sign_in" parameters:requestData operation:NULL error:&error];
         if (error == nil) {
-            if (INT_VAL([r objectForKey:@"status"]) == API_UNAUTHORIZED) {
-                loginFailureMessage = [r objectForKey:@"message"];
-            } else {
+            //if (INT_VAL([r objectForKey:@"status"]) == API_UNAUTHORIZED) {
+            //    loginFailureMessage = [r objectForKey:@"message"];
+            //} else {
                 if ([method isEqual:@"Get"]) {
                     result = [[APIClient sharedClient] synchronouslyGetPath:url parameters:nil operation:NULL error:&error];
                 } else if ([method isEqual:@"Post"]) {
@@ -164,7 +162,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
                 } else if ([method isEqual:@"Put"]) {
                     result = [[APIClient sharedClient] synchronouslyPostPath:url parameters:params operation:NULL error:&error];
                 }
-            }
+            //}
         }
     }
     if (loginFailureMessage) {
@@ -180,7 +178,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://www.tmeiju.com";
             }
         } else {
             if (success) {
-                success([result objectForKey:@"data"]);
+                success(result);
             }
         }
     }

@@ -8,6 +8,9 @@
 
 #import "ApplicationController.h"
 
+#define WIN_WIDTH [[UIScreen mainScreen] bounds].size.width
+#define WIN_HEIGHT [[UIScreen mainScreen] bounds].size.height
+
 @interface ApplicationController ()
 
 @end
@@ -22,4 +25,7 @@
     [super didReceiveMemoryWarning];
 }
 
+- (CGRect)contentRect {
+    return CGRectMake(0, WIN_HEIGHT * 0.1, [[UIScreen mainScreen] bounds].size.width, WIN_HEIGHT - WIN_HEIGHT * 0.1 - 40);
+}
 @end
