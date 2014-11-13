@@ -9,6 +9,7 @@
 #import "Drawer.h"
 #import "StyleParser.h"
 #import "ImageButton.h"
+#import "UIImageView+WebCache.h"
 
 @implementation Drawer
 
@@ -63,6 +64,14 @@
     UIImage *img = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]]];
     [img drawInRect:rect];
     return rect;
+}
+
+- (UIImageView*) genRemoteImage:(NSString *)url placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid
+{
+    CGRect rect = [styleParser rectFor:uid];
+    UIImageView *img = [[UIImageView alloc] initWithFrame:rect];
+    [img sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:placeholderImageName]];
+    return img;
 }
 
 - (UITextField*) genTextInput:(NSString *)placeholder css:(NSString *)uid

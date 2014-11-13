@@ -6,10 +6,16 @@ text_input_wrap:
     font-size: 22
 
 // UI
+logo:
+    top: win_width * 0.1
+    left: (win_width - width) / 2
+    width: 100
+    height: 100
+
 title:
     font-size: 50
     left: (win_width - width) / 2
-    top: win_width * 0.25
+    top: win_width * 0.4
     color: rgb(56, 146, 227)
 
 text_input_name_wrap:

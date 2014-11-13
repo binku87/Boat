@@ -26,6 +26,10 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (NSDictionary *) layoutExtraParams {
+    return @{};
+}
+
 - (NSString *) layoutName
 {
     return @"Application";

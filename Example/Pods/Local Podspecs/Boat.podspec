@@ -34,4 +34,5 @@ Pod::Spec.new do |s|
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'AFNetworking', '1.3.3'
   s.dependency 'AFNetworking-Synchronous'
+  s.dependency 'SDWebImage', '3.7.1'
 end

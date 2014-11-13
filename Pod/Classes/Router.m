@@ -31,13 +31,13 @@ static NSMutableDictionary *loadedControllers = nil;
     } else {
         layoutController = (BoatLayoutController *)[Router controllerByName:layoutName];
         NSMutableDictionary *combineParams = [NSMutableDictionary dictionaryWithDictionary:params];
-        [combineParams addEntriesFromDictionary:[contentController layoutExtraParams]];
-        [layoutController refreshView:combineParams];
         [[self mainWindow] bringSubviewToFront:layoutController.view];
         [layoutController switchToView:contentController.view];
         if ([contentController respondsToSelector:@selector(refreshView:)]) {
             [contentController refreshView:combineParams];
         }
+        [combineParams addEntriesFromDictionary:[contentController layoutExtraParams]];
+        [layoutController refreshView:combineParams];
     }
 }
 

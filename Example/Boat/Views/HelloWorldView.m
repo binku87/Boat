@@ -16,7 +16,9 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"SignIn.ss"];
+    Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"HelloWorld.ss"];
+    UIImageView *logo = [drawer genRemoteImage:@"http://tmeiju.com/images/ios-qrcode.png" placeholderImage:@"login-username.png" css:@"logo"];
+    [self addSubview:logo];
     [drawer drawText:@"Boat" css:@"title"];
 
     [drawer drawImage:@"login-username-input-bg.png" css:@"text_input_name_wrap"];
