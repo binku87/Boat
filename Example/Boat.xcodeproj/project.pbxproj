@@ -109,13 +109,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>27A3B8622FA632CAE1F3D8B7</key>
-		<dict>
-			<key>fileRef</key>
-			<string>97EA804394B480FC01BEBABC</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>2EE8F0C2C473C9D2768AF544</key>
 		<dict>
 			<key>children</key>
@@ -644,7 +637,7 @@ fi
 				<string>6003F590195388D20070C39A</string>
 				<string>6003F592195388D20070C39A</string>
 				<string>6003F58E195388D20070C39A</string>
-				<string>27A3B8622FA632CAE1F3D8B7</string>
+				<string>E93D6CA135CB15C1A9691734</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -2017,6 +2010,13 @@ fi
 			<string>Public/Images/login-username.png</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E93D6CA135CB15C1A9691734</key>
+		<dict>
+			<key>fileRef</key>
+			<string>97EA804394B480FC01BEBABC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>EBEDB684794FD27FA45478FA</key>
 		<dict>

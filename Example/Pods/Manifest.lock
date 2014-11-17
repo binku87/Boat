@@ -32,8 +32,6 @@ DEPENDENCIES:
   - Expecta
   - Expecta+Snapshots
   - FBSnapshotTestCase
-  - FMDBMigrationManager
-  - LKDBHelper
   - Specta (~> 0.2.1)
 
 EXTERNAL SOURCES:
