@@ -10,6 +10,9 @@
 #import "HelloWorldView.h"
 #import <Boat/Router.h>
 #import "ApplicationController.h"
+#import "FMDatabase.h"
+#import "FMDBMigrationManager.h"
+#import "User.h"
 
 @implementation IUAppDelegate
 
@@ -21,6 +24,14 @@
     [Router redirectTo:@"HelloWorld" params:nil];
     //ApplicationController *applicationController = [[ApplicationController alloc] init];
     //[self.window addSubview:applicationController.view];
+    
+    [ActiveRecord createAndMigrateDB:@"boat.db"];
+    User *user = [User new];
+    user.name = @"Binku87111";
+    user.password = @"123123";
+    [user save];
+    //user = [User firstBy:@"id = 35"];
+    //[user destroy];
     [self.window makeKeyAndVisible];
     return YES;
     

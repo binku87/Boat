@@ -42,6 +42,18 @@
 #define COCOAPODS_VERSION_MINOR_FBSnapshotTestCase 2
 #define COCOAPODS_VERSION_PATCH_FBSnapshotTestCase 0
 
+// FMDB/common
+#define COCOAPODS_POD_AVAILABLE_FMDB_common
+#define COCOAPODS_VERSION_MAJOR_FMDB_common 2
+#define COCOAPODS_VERSION_MINOR_FMDB_common 4
+#define COCOAPODS_VERSION_PATCH_FMDB_common 0
+
+// FMDBMigrationManager
+#define COCOAPODS_POD_AVAILABLE_FMDBMigrationManager
+#define COCOAPODS_VERSION_MAJOR_FMDBMigrationManager 1
+#define COCOAPODS_VERSION_MINOR_FMDBMigrationManager 3
+#define COCOAPODS_VERSION_PATCH_FMDBMigrationManager 1
+
 // SDWebImage
 #define COCOAPODS_POD_AVAILABLE_SDWebImage
 #define COCOAPODS_VERSION_MAJOR_SDWebImage 3
