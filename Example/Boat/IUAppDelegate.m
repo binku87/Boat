@@ -30,6 +30,7 @@
     user.name = @"Binku87111";
     user.password = @"123123";
     [user save];
+    [user destroy];
     //user = [User firstBy:@"id = 35"];
     //[user destroy];
     [self.window makeKeyAndVisible];

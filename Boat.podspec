@@ -36,4 +36,5 @@ Pod::Spec.new do |s|
   s.dependency 'AFNetworking-Synchronous'
   s.dependency 'SDWebImage', '3.7.1'
   s.dependency 'FMDBMigrationManager', '1.3.1'
+  s.dependency 'LKDBHelper', '2.1'
 end

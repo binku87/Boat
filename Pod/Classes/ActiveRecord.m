@@ -23,6 +23,7 @@ static NSString *databaseName;
     databaseName = _databaseName;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *dbPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:databaseName];
+    NSLog(@"ActiveRecord: database path - %@", dbPath);
     FMDatabase *db = [FMDatabase databaseWithPath:dbPath];
     [db open];
     FMDBMigrationManager *manager = [FMDBMigrationManager managerWithDatabaseAtPath:dbPath migrationsBundle:[NSBundle mainBundle]];
