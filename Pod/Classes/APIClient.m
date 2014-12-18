@@ -7,11 +7,12 @@
 //
 
 #import "APIClient.h"
-
+#import "ActiveRecord.h"
 
 #import "AFJSONRequestOperation.h"
 #import "AFHTTPRequestOperation+ResponseObject.h"
 #import "AFHTTPClient+Synchronous.h"
+
 //#import "Route.h"
 //#import "System.h"
 
@@ -23,7 +24,9 @@
 #define INT_VAL(...) ((NSNumber *)__VA_ARGS__).intValue
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
-static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
+//static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.0.101:3000";
+//static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
+static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com";
 
 @implementation APIClient
 
@@ -33,11 +36,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
         if (INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
             alert([result objectForKey:@"simple_message"]);
         } else if (INT_VAL([result objectForKey:@"status"]) == API_SUCCESS) {
-            //[System setUserName:[data objectForKey:@"email_or_name"]];
-            //[System setPassword:[data objectForKey:@"password"]];
-            if (success) {
-                success(@"");
-            }
+
         } else {
             alert(@"登陆失败，请重新登陆");
         }
@@ -79,10 +78,10 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
 
 + (void)getData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure
 {
-    [[APIClient sharedClient] getPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
-        [APIClient handleResponse:result url:url method:@"Get" params:params success:success failure:failure];
+    [[self sharedClient] getPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
+        [self handleResponse:result url:url method:@"Get" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        alert(@"请重新尝试");
+        alert(@"出现异常，请重新尝试");
         if (failure) {
             failure(API_FAILURE);
         }
@@ -94,7 +93,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
     [[APIClient sharedClient] postPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [APIClient handleResponse:result url:url method:@"Post" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        alert(@"请重新尝试");
+        alert(@"出现异常，请重新尝试");
         if (failure) {
             failure(API_FAILURE);
         }
@@ -106,7 +105,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
     [[APIClient sharedClient] putPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [APIClient handleResponse:result url:url method:@"Put" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        alert(@"请重新尝试");
+        alert(@"出现异常，请重新尝试");
         if (failure) {
             failure(API_FAILURE);
         }
@@ -145,41 +144,31 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
     return self;
 }
 
++ (id) authentication {
+    alert(@"APClient#anthentication doesn't implement yet");
+    return false;
+}
+
 + (void)handleResponse:(id) result url:(NSString *)url method:(NSString *)method params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure {
     NSError *error;
-    NSString *loginFailureMessage;
     if ([result isKindOfClass:[NSDictionary class]] && INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
-        NSDictionary *requestData = [NSDictionary dictionaryWithObjectsAndKeys:@"binku87@gmail.com", @"user[email]", @"123123123", @"user[password]", nil];
-        id r = [[APIClient sharedClient] synchronouslyPostPath:@"users/sign_in" parameters:requestData operation:NULL error:&error];
-        if (error == nil) {
-            //if (INT_VAL([r objectForKey:@"status"]) == API_UNAUTHORIZED) {
-            //    loginFailureMessage = [r objectForKey:@"message"];
-            //} else {
-                if ([method isEqual:@"Get"]) {
-                    result = [[APIClient sharedClient] synchronouslyGetPath:url parameters:nil operation:NULL error:&error];
-                } else if ([method isEqual:@"Post"]) {
-                    result = [[APIClient sharedClient] synchronouslyPostPath:url parameters:params operation:NULL error:&error];
-                } else if ([method isEqual:@"Put"]) {
-                    result = [[APIClient sharedClient] synchronouslyPostPath:url parameters:params operation:NULL error:&error];
-                }
-            //}
+        if ([self authentication]) {
+            if ([method isEqual:@"Get"]) {
+                result = [[APIClient sharedClient] synchronouslyGetPath:url parameters:nil operation:NULL error:&error];
+            } else if ([method isEqual:@"Post"]) {
+                result = [[APIClient sharedClient] synchronouslyPostPath:url parameters:params operation:NULL error:&error];
+            } else if ([method isEqual:@"Put"]) {
+                result = [[APIClient sharedClient] synchronouslyPostPath:url parameters:params operation:NULL error:&error];
+            }
         }
     }
-    if (loginFailureMessage) {
-        alert(loginFailureMessage);
+    if (error) {
         if (failure) {
-            failure(API_UNAUTHORIZED);
+            failure(0);
         }
     } else {
-        if (error) {
-            alert(@"请重新尝试");
-            if (failure) {
-                failure(API_FAILURE);
-            }
-        } else {
-            if (success) {
-                success(result);
-            }
+        if (success) {
+            success(result);
         }
     }
 }

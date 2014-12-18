@@ -66,3 +66,9 @@
 #define COCOAPODS_VERSION_MINOR_SDWebImage_Core 7
 #define COCOAPODS_VERSION_PATCH_SDWebImage_Core 1
 
+// UIImage+animatedGif
+#define COCOAPODS_POD_AVAILABLE_UIImage_animatedGif
+#define COCOAPODS_VERSION_MAJOR_UIImage_animatedGif 0
+#define COCOAPODS_VERSION_MINOR_UIImage_animatedGif 1
+#define COCOAPODS_VERSION_PATCH_UIImage_animatedGif 0
+

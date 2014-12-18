@@ -12,12 +12,14 @@
 
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
-static NSMutableDictionary *loadedControllers = nil;
+static NSMutableDictionary *_loadedControllers = nil;
+static NSString *_currentContentController = nil;
 
 @implementation Router
 
 + (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params
 {
+    _currentContentController = viewControllerName;
     if (params == nil) {
         params = @{};
     }
@@ -28,6 +30,8 @@ static NSMutableDictionary *loadedControllers = nil;
         layoutName = [contentController layoutName];
     }
     if ([layoutName isEqual:@""]) {
+        [[self mainWindow] bringSubviewToFront:contentController.view];
+        [contentController refreshView:params];
     } else {
         layoutController = (BoatLayoutController *)[Router controllerByName:layoutName];
         NSMutableDictionary *combineParams = [NSMutableDictionary dictionaryWithDictionary:params];
@@ -49,14 +53,14 @@ static NSMutableDictionary *loadedControllers = nil;
     }
     viewControllerName = [viewControllerName stringByAppendingString:@"Controller"];
     BoatViewController *viewController;
-    if (loadedControllers == nil) {
-        loadedControllers = [NSMutableDictionary new];
+    if (_loadedControllers == nil) {
+        _loadedControllers = [NSMutableDictionary new];
     }
-    if ([loadedControllers objectForKey:viewControllerName]) {
-        viewController = [loadedControllers objectForKey:viewControllerName];
+    if ([_loadedControllers objectForKey:viewControllerName]) {
+        viewController = [_loadedControllers objectForKey:viewControllerName];
     } else {
         viewController = [[NSClassFromString(viewControllerName) alloc] init];
-        [loadedControllers setObject:viewController forKey:viewControllerName];
+        [_loadedControllers setObject:viewController forKey:viewControllerName];
         [[self mainWindow] addSubview:viewController.view];
     }
     if (viewController == nil) {
@@ -64,6 +68,11 @@ static NSMutableDictionary *loadedControllers = nil;
         alert(message);
     }
     return viewController;
+}
+
++ (NSString *)currentContentController
+{
+    return _currentContentController;
 }
 
 + (UIWindow *) mainWindow

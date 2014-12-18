@@ -55,6 +55,13 @@
         contentView.frame = [self contentRect];
         [self.view addSubview:contentView];
     }
+    CATransition *animation = [CATransition animation];
+    animation.delegate = self;
+    animation.duration = 0.1;
+    animation.timingFunction = UIViewAnimationCurveEaseInOut;
+    animation.type = kCATransitionPush;
+    animation.subtype = kCATransitionFromLeft;
+    //[[contentView layer] addAnimation:animation forKey:@"animation"];
 }
 
 - (CGRect)contentRect {

@@ -21,6 +21,14 @@
     return self;
 }
 
+- (CGRect) rectFor:(NSString *)uid {
+    return [styleParser rectFor:uid];
+}
+
+- (CGRect) rectForText:(NSString *)text css:(NSString *)uid {
+    return [styleParser rectForText:text uid:uid];
+};
+
 - (CGRect) drawRect:(NSString *)uid
 {
     CGRect rect = [styleParser rectFor:uid];
@@ -44,12 +52,15 @@
 
 - (CGRect) drawText:(NSString *)text css:(NSString *)uid
 {
+    if ([text isEqual:[NSNull null]]) {
+        text = @"";
+    }
     CGRect rect = [styleParser rectForText:text uid:uid];
     UIFont *font = [styleParser fontFor:uid];
     UIColor *color = [styleParser colorFor:uid];
     [color set];
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     NSDictionary *attributes = @{NSFontAttributeName: font,
                                  NSForegroundColorAttributeName: color,
                                  NSParagraphStyleAttributeName: paragraphStyle };
@@ -71,6 +82,9 @@
     CGRect rect = [styleParser rectFor:uid];
     UIImageView *img = [[UIImageView alloc] initWithFrame:rect];
     [img sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:placeholderImageName]];
+    CALayer *layer=[img layer];
+    [layer setMasksToBounds:YES];
+    [layer setCornerRadius:5.0];
     return img;
 }
 

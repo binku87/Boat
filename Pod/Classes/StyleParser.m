@@ -7,6 +7,7 @@
 //
 
 #import "StyleParser.h"
+#define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
 @implementation StyleParser
 
@@ -26,72 +27,97 @@
 
 - (CGRect) rectFor:(NSString *)uid
 {
+    NSMutableDictionary *dom = [self getCombineDom:uid];
     CGFloat startX = 0;
     CGFloat startY = 0;
-    CGFloat width = 0;
-    CGFloat height = 0;
-    NSMutableDictionary *dom = [self getCombineDom:uid];
-    if ([[dom objectForKey:@"is_updated"] isEqual:@"1"]) {
+    CGFloat width = [[dom objectForKey:@"width"] floatValue];
+    CGFloat height = [[dom objectForKey:@"height"] floatValue];
+    CGRect relativeDom;
+    if ([StyleParser isCalculatedRect:dom]) {
         return CGRectMake([[dom objectForKey:@"left"] floatValue],
                           [[dom objectForKey:@"top"] floatValue],
                           [[dom objectForKey:@"width"] floatValue],
                           [[dom objectForKey:@"height"] floatValue]);
     }
     NSString *widthAttr = [dom objectForKey:@"width"];
-    if (widthAttr) width = [self calVal:widthAttr width:width height:height];
+    if (widthAttr) {
+        width = [self calVal:widthAttr width:width height:height];
+        [dom setObject:[NSString stringWithFormat:@"%f", width] forKey:@"width"];
+    }
     NSString *heightAttr = [dom objectForKey:@"height"];
-    if (heightAttr) height = [self calVal:heightAttr width:width height:height];
-    NSString *leftAttr = [dom objectForKey:@"left"];
-    if (leftAttr) startX = [self calVal:leftAttr width:width height:height];
-    NSString *topAttr = [dom objectForKey:@"top"];
-    if (topAttr) startY = [self calVal:topAttr width:width height:height];
+    if (heightAttr) {
+        height = [self calVal:heightAttr width:width height:height];
+        [dom setObject:[NSString stringWithFormat:@"%f", height] forKey:@"height"];
+    }
     NSString *relative = [dom objectForKey:@"relative"];
     if (relative) {
-        CGRect relativeDom = [self rectFor:relative];
-        startX += relativeDom.origin.x;
-        startY += relativeDom.origin.y;
+        relativeDom = [self rectFor:relative];
+        [dom setObject:@"1" forKey:@"isCalRelative"];
+    }
+    NSString *leftAttr = [dom objectForKey:@"left"];
+    if (leftAttr) {
+        startX = [self calVal:leftAttr width:width height:height];
+        if (relative) {
+            startX += relativeDom.origin.x;
+        }
+        [dom setObject:[NSString stringWithFormat:@"%f", startX] forKey:@"left"];
+        [dom setObject:[NSString stringWithFormat:@"%f", startX + width] forKey:@"right"];
+    }
+    NSString *topAttr = [dom objectForKey:@"top"];
+    if (topAttr) {
+        startY = [self calVal:topAttr width:width height:height];
+        if (relative) {
+            startY += relativeDom.origin.y;
+        }
+        [dom setObject:[NSString stringWithFormat:@"%f", startY] forKey:@"top"];
+        [dom setObject:[NSString stringWithFormat:@"%f", startY + height] forKey:@"bottom"];
     }
     CGRect rect = CGRectMake(startX, startY, width, height);
-    [self saveCalRectFor:uid rect:rect];
-    NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, width, height);
+    //NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, width, height);
     return rect;
 }
 
 - (CGRect) rectForText:(NSString *)text uid:(NSString *)uid
 {
-    CGRect rect;
     NSMutableDictionary *dom = [self getCombineDom:uid];
-    if ([dom objectForKey:@"width"] == NULL || [dom objectForKey:@"height"] == NULL) {
-        CGFloat startX = 0;
-        CGFloat startY = 0;
+    if ([[dom objectForKey:@"width"] intValue] == 0 || [[dom objectForKey:@"height"] intValue] == 0) {
         NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+        paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
         NSDictionary *attributes = @{NSFontAttributeName: [self fontFor:uid],
                                      NSParagraphStyleAttributeName: paragraphStyle };
-        CGRect textSpace = [text boundingRectWithSize:CGSizeMake(self.winWidth, 300)
+        CGFloat textMaxWidth = [self calVal:[dom objectForKey:@"width"] width:0 height:0];
+        if(textMaxWidth == 0) textMaxWidth = self.winWidth;
+        CGFloat textMaxHeight = [self calVal:[dom objectForKey:@"height"] width:0 height:0];
+        if(textMaxHeight == 0) textMaxHeight = 1000;
+        CGRect textSpace = [text boundingRectWithSize:CGSizeMake(textMaxWidth, textMaxHeight)
                                               options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                            attributes:attributes
                                               context:nil];
-        NSString *leftAttr = [dom objectForKey:@"left"];
-        if (leftAttr) startX += [self calVal:leftAttr width:textSpace.size.width height:textSpace.size.height];
-        NSString *topAttr = [dom objectForKey:@"top"];
-        if (topAttr) startY += [self calVal:topAttr width:textSpace.size.width height:textSpace.size.height];
-        rect = CGRectMake(startX, startY, textSpace.size.width, textSpace.size.height);
-        NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, textSpace.size.width, textSpace.size.height);
-        [self saveCalRectFor:uid rect:rect];
-    } else {
-        rect = [self rectFor:uid];
+        if (![dom objectForKey:@"width"]) {
+            [dom setObject:[NSString stringWithFormat:@"%f", textSpace.size.width] forKey:@"width"];
+        }
+        if (![dom objectForKey:@"height"]) {
+            [dom setObject:[NSString stringWithFormat:@"%f", textSpace.size.height] forKey:@"height"];
+        }
     }
-    return rect;
+    [domMap setObject:dom forKey:uid];
+    return [self rectFor:uid];
 }
 
 - (UIFont *) fontFor:(NSString *)uid
 {
     NSMutableDictionary *dom = [self getCombineDom:uid];
     NSString *fontAttr = [dom objectForKey:@"font-size"];
+    NSString *fontFamilyAttr = [dom objectForKey:@"font-family"];
     UIFont *font = [UIFont systemFontOfSize:20];
+    if (!fontFamilyAttr) {
+        fontFamilyAttr = @"Helvetica";
+    }
     if (fontAttr) {
-        font = [UIFont systemFontOfSize:[fontAttr intValue]];
+        font = [UIFont fontWithName:fontFamilyAttr size:[fontAttr intValue]];
+    }
+    if (!font) {
+        alert(@"Font family doesn't exist");
     }
     return font;
 }
@@ -124,13 +150,12 @@
     return [[UIScreen mainScreen] bounds].size.height;
 }
 
-- (CGFloat) calVal:(NSString *)attrVal width:(CGFloat)width height:(CGFloat)height
+- (CGFloat) calVal:(NSString *)_attrVal width:(CGFloat)width height:(CGFloat)height
 {
+    if(_attrVal == nil) return 0;
+    NSString *attrVal = [_attrVal copy];
     for (NSString *uid in [domMap allKeys]) {
         if ([attrVal rangeOfString:[NSString stringWithFormat:@"%@.", uid] options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            if ([uid isEqual:@"title"] && [attrVal isEqual:@"title.bottom"]) {
-                
-            }
             CGRect rect = [self rectFor:uid];
             CGFloat uidWidth = rect.origin.x + rect.size.width;
             CGFloat uidHeight = rect.origin.y + rect.size.height;
@@ -147,7 +172,7 @@
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"width" withString:[NSString stringWithFormat:@"%f", width]];
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"height" withString:[NSString stringWithFormat:@"%f", height]];
     NSExpression *expression = [NSExpression expressionWithFormat:attrVal];
-    NSLog(@"Boat: [StyleParser] %@", expression);
+    //NSLog(@"Boat: [StyleParser] %@", expression);
     id result = [expression expressionValueWithObject:nil context:nil];
     return [result floatValue];
 }
@@ -197,10 +222,36 @@
 }
 
 - (NSMutableDictionary*) getCombineDom:(NSString *)uid {
+    if ([domMap objectForKey:uid]) {
+        return [domMap objectForKey:uid];
+    }
     NSMutableDictionary *dom = [NSMutableDictionary new];
     for (NSString *_uid in [uid componentsSeparatedByString:@" "]) {
         [dom addEntriesFromDictionary:[domMap objectForKey:_uid]];
     };
     return dom;
+}
+
++ (BOOL) isCalculatedRect:(NSDictionary *)dom {
+    if ([dom objectForKey:@"relative"] && ![dom objectForKey:@"isCalRelative"]) {
+        return NO;
+    }
+    if ([StyleParser isNumValue:[dom objectForKey:@"width"]] &&
+        [StyleParser isNumValue:[dom objectForKey:@"height"]] &&
+        [StyleParser isNumValue:[dom objectForKey:@"left"]] &&
+        [StyleParser isNumValue:[dom objectForKey:@"top"]]) {
+        return YES;
+    }
+    return NO;
+}
+
++ (BOOL) isNumValue:(NSString *)value {
+    
+    NSPredicate *num = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^[0-9]{0,10}.?[0-9]{0,10}$"];
+    if ([num evaluateWithObject:value])
+    {
+        return YES;
+    }
+    return NO;
 }
 @end
