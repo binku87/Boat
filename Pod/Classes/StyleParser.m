@@ -8,6 +8,7 @@
 
 #import "StyleParser.h"
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
+#define isEmpty(...) ([__VA_ARGS__ isEqual:[NSNull null]] || [__VA_ARGS__ isEqual:@""])
 
 @implementation StyleParser
 
@@ -21,12 +22,20 @@
 
 - (id) valueFor:(NSString *)uid attr:(NSString *)attr
 {
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return nil;
+    }
     NSMutableDictionary *dom = [self getCombineDom:uid];
     return [dom objectForKey:attr];
 }
 
 - (CGRect) rectFor:(NSString *)uid
 {
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return CGRectMake(0, 0, 0, 0);
+    }
     NSMutableDictionary *dom = [self getCombineDom:uid];
     CGFloat startX = 0;
     CGFloat startY = 0;
@@ -73,12 +82,17 @@
         [dom setObject:[NSString stringWithFormat:@"%f", startY + height] forKey:@"bottom"];
     }
     CGRect rect = CGRectMake(startX, startY, width, height);
+    rect = [self addPadding:rect uid:uid];
     //NSLog(@"Boat: [StyleParser] Rect %@ - (%f, %f, %f, %f)", uid, startX, startY, width, height);
     return rect;
 }
 
 - (CGRect) rectForText:(NSString *)text uid:(NSString *)uid
 {
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return CGRectMake(0, 0, 0, 0);
+    }
     NSMutableDictionary *dom = [self getCombineDom:uid];
     if ([[dom objectForKey:@"width"] intValue] == 0 || [[dom objectForKey:@"height"] intValue] == 0) {
         NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -106,6 +120,10 @@
 
 - (UIFont *) fontFor:(NSString *)uid
 {
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return nil;
+    }
     NSMutableDictionary *dom = [self getCombineDom:uid];
     NSString *fontAttr = [dom objectForKey:@"font-size"];
     NSString *fontFamilyAttr = [dom objectForKey:@"font-family"];
@@ -124,6 +142,10 @@
 
 - (UIColor *) colorFor:(NSString *)uid
 {
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return nil;
+    }
     NSMutableDictionary *dom = [self getCombineDom:uid];
     NSString *colorAttr = [dom objectForKey:@"color"];
     UIColor *color = [UIColor grayColor];
@@ -137,6 +159,57 @@
         color = [UIColor colorWithRed:rVal/255.0f green:gVal/255.0f blue:bVal/255.0f alpha:1];
     }
     return color;
+}
+
+- (UIColor *) backgroundColorFor:(NSString *)uid
+{
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return nil;
+    }
+    NSMutableDictionary *dom = [self getCombineDom:uid];
+    NSString *colorAttr = [dom objectForKey:@"background-color"];
+    UIColor *color = [UIColor grayColor];
+    if (colorAttr) {
+        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@"rgb(" withString:@""];
+        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@")" withString:@""];
+        NSArray *rgb = [colorAttr componentsSeparatedByString:@","];
+        float rVal = [(NSString *)[rgb objectAtIndex:0] floatValue];
+        float gVal = [(NSString *)[rgb objectAtIndex:1] floatValue];
+        float bVal = [(NSString *)[rgb objectAtIndex:2] floatValue];
+        color = [UIColor colorWithRed:rVal/255.0f green:gVal/255.0f blue:bVal/255.0f alpha:1];
+    }
+    return color;
+}
+
+- (CGRect) paddingFor:(NSString *)uid
+{
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return CGRectMake(0, 0, 0, 0);
+    }
+    CGRect rect = CGRectMake(0, 0, 0, 0);
+    NSMutableDictionary *dom = [self getCombineDom:uid];
+    NSString *paddingAttr = [dom objectForKey:@"padding"];
+    if (paddingAttr) {
+        NSArray *offsets = [paddingAttr componentsSeparatedByString:@" "];
+        if([offsets count] != 4) {
+            alert(@"Boat: [StyleParser] padding format is wrong!");
+        }
+        rect = CGRectMake([[offsets objectAtIndex:3] floatValue], [[offsets objectAtIndex:0] floatValue],
+                          [[offsets objectAtIndex:1] floatValue], [[offsets objectAtIndex:2] floatValue]);
+    }
+    return rect;
+}
+
+- (CGRect) addPadding:(CGRect)originalRect uid:(NSString *)uid
+{
+    CGRect paddingRect = [self paddingFor:uid];
+    originalRect.origin.x -= paddingRect.origin.x;
+    originalRect.origin.y -= paddingRect.origin.y;
+    originalRect.size.width += paddingRect.size.width + paddingRect.origin.x;
+    originalRect.size.height += paddingRect.size.height + paddingRect.origin.y;
+    return originalRect;
 }
 
 // Helpers
@@ -172,9 +245,14 @@
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"width" withString:[NSString stringWithFormat:@"%f", width]];
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"height" withString:[NSString stringWithFormat:@"%f", height]];
     NSExpression *expression = [NSExpression expressionWithFormat:attrVal];
-    //NSLog(@"Boat: [StyleParser] %@", expression);
-    id result = [expression expressionValueWithObject:nil context:nil];
-    return [result floatValue];
+    @try {
+        id result = [expression expressionValueWithObject:nil context:nil];
+        return [result floatValue];
+    }
+    @catch (NSException *exception) {
+        alert([NSString stringWithFormat:@"Boat: [StyleParser] Expression (%@) is invalid", expression]);
+        return 0;
+    }
 }
 
 - (void) saveCalRectFor:(NSString *)uid rect:(CGRect)rect
@@ -193,31 +271,36 @@
 - (void) initDomMap:(NSString *)cssFile
 {
     domMap = [[NSMutableDictionary alloc] init];
-    NSArray *fileAttrs = [cssFile componentsSeparatedByString:@"."];
-    NSString *file = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
-    NSString *fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-    NSArray *allLinedStrings = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-    if (allLinedStrings == nil) {
-        NSString *message = [NSString stringWithFormat:@"Style file %@ doesn't exist", cssFile];
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Info" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alertView show];
-    }
-    NSMutableDictionary *dom;
-    for (NSString *line in allLinedStrings) {
-        BOOL isCommentOrBlankLine = [line hasPrefix:@"//"] || [[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqual:@""];
-        if (!isCommentOrBlankLine) {
-            NSString *formatedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            if ([formatedLine hasSuffix:@":"]) {
-                dom = [[NSMutableDictionary alloc] init];
-                NSString *uid = [formatedLine stringByReplacingOccurrencesOfString:@":" withString:@""];
-                [domMap setObject:dom forKey:uid];
-            } else {
-                NSArray *keyVal = [formatedLine componentsSeparatedByString:@":"];
-                NSString *key = [[keyVal objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                NSString *val = [[keyVal objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                [dom setObject:val forKey:key];
+    @try {
+        NSArray *fileAttrs = [cssFile componentsSeparatedByString:@"."];
+        NSString *file = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
+        NSString *fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
+        NSArray *allLinedStrings = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+        if (allLinedStrings == nil) {
+            NSString *message = [NSString stringWithFormat:@"Style file %@ doesn't exist", cssFile];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Info" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+            [alertView show];
+        }
+        NSMutableDictionary *dom;
+        for (NSString *line in allLinedStrings) {
+            BOOL isCommentOrBlankLine = [line hasPrefix:@"//"] || [[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqual:@""];
+            if (!isCommentOrBlankLine) {
+                NSString *formatedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if ([formatedLine hasSuffix:@":"]) {
+                    dom = [[NSMutableDictionary alloc] init];
+                    NSString *uid = [formatedLine stringByReplacingOccurrencesOfString:@":" withString:@""];
+                    [domMap setObject:dom forKey:uid];
+                } else {
+                    NSArray *keyVal = [formatedLine componentsSeparatedByString:@":"];
+                    NSString *key = [[keyVal objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                    NSString *val = [[keyVal objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                    [dom setObject:val forKey:key];
+                }
             }
         }
+    }
+    @catch (NSException *exception) {
+        alert([NSString stringWithFormat:@"Boat: Parse css file %@ failure", cssFile]);
     }
 }
 
@@ -253,5 +336,39 @@
         return YES;
     }
     return NO;
+}
+
+- (CGFloat) widthForTextWithHeight:(NSString *)text uid:(NSString *)uid height:(CGFloat)height
+{
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    UIFont *font = [self fontFor:uid];
+    NSDictionary *attributes = @{NSFontAttributeName: font,
+                                 NSParagraphStyleAttributeName: paragraphStyle };
+    CGRect textSpace = [text boundingRectWithSize:CGSizeMake(0, height)
+                                          options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                       attributes:attributes
+                                          context:nil];
+    if (font.pointSize * 2 > height) {
+        // Only have one line
+        return textSpace.size.width;
+    } else {
+        // More than one line
+        NSMutableDictionary *dom = [self getCombineDom:uid];
+        return [[dom objectForKey:@"width"] floatValue];
+    }
+}
+
+- (CGFloat) heightForTextWithWidth:(NSString *)text uid:(NSString *)uid width:(CGFloat)width
+{
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    NSDictionary *attributes = @{NSFontAttributeName: [self fontFor:uid],
+                                 NSParagraphStyleAttributeName: paragraphStyle };
+    CGRect textSpace = [text boundingRectWithSize:CGSizeMake(width, [self winHeight])
+                                          options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                       attributes:attributes
+                                          context:nil];
+    return textSpace.size.height;
 }
 @end

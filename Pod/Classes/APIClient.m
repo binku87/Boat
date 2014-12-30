@@ -76,39 +76,30 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com
     success(@"");
 }
 
-+ (void)getData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure
++ (void)getData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(NSError *error))failure
 {
     [[self sharedClient] getPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [self handleResponse:result url:url method:@"Get" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        alert(@"出现异常，请重新尝试");
-        if (failure) {
-            failure(API_FAILURE);
-        }
+        [self defaultFailureHandler:failure AFHTTPRequestOperation:operation NSError:error];
     }];
 }
 
-+ (void)postData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure
++ (void)postData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(NSError *error))failure
 {
     [[APIClient sharedClient] postPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [APIClient handleResponse:result url:url method:@"Post" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        alert(@"出现异常，请重新尝试");
-        if (failure) {
-            failure(API_FAILURE);
-        }
+        [self defaultFailureHandler:failure AFHTTPRequestOperation:operation NSError:error];
     }];
 }
 
-+ (void)putData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure
++ (void)putData:(NSString *)url params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(NSError *error))failure
 {
     [[APIClient sharedClient] putPath:url parameters:params success:^(AFHTTPRequestOperation *operation, id result) {
         [APIClient handleResponse:result url:url method:@"Put" params:params success:success failure:failure];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        alert(@"出现异常，请重新尝试");
-        if (failure) {
-            failure(API_FAILURE);
-        }
+        [self defaultFailureHandler:failure AFHTTPRequestOperation:operation NSError:error];
     }];
 }
 
@@ -144,12 +135,42 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com
     return self;
 }
 
-+ (id) authentication {
++ (BOOL) authentication {
     alert(@"APClient#anthentication doesn't implement yet");
+    return NO;
+}
+
++ (id) unAuthenticationHandler {
+    alert(@"APClient#unAuthenticationHandler doesn't implement yet");
     return false;
 }
 
-+ (void)handleResponse:(id) result url:(NSString *)url method:(NSString *)method params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(int error))failure {
++ (id) unExceptedServerErrorHandler {
+    alert(@"APClient#unExceptedServerErrorHandler doesn't implement yet");
+    return false;
+}
+
++ (id) defaultFailureHandler:(void (^)(NSError *error))failure AFHTTPRequestOperation:(AFHTTPRequestOperation *)operation NSError:(NSError *)error {
+    long statusCode = [operation.response statusCode];
+    NSURL  *url  = [operation.request URL];
+    NSLog(@"\nLoad API ERROR: \n** URL: %@ \n** ERROR CODE: %ld", url, statusCode);
+    
+    switch (statusCode) {
+        case API_UNAUTHORIZED:
+            [self unAuthenticationHandler];
+            break;
+        default:
+            [self unExceptedServerErrorHandler];
+            break;
+    };
+    if (failure) {
+        failure(error);
+    };
+    
+    return false;
+}
+
++ (void)handleResponse:(id) result url:(NSString *)url method:(NSString *)method params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSError *error;
     if ([result isKindOfClass:[NSDictionary class]] && INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
         if ([self authentication]) {
