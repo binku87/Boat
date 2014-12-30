@@ -10,12 +10,16 @@
 
 @implementation BoatView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
+@synthesize btDrawer;
+
+- (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setBackgroundColor:[UIColor whiteColor]];
+    }
+    btDrawer = [[Drawer alloc] initWithStyleFile:styleFile view:self];
+    return self;
 }
-*/
 
 @end

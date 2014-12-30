@@ -144,8 +144,9 @@
 
 - (NSDictionary *)cachedDrawImage:(NSString *)imageName placeholdrImage:(NSString *)placeholdrImageName css:(NSString *)uid
 {
-    if ([_cachedDomAttributes objectForKey:uid]) {
-        return [_cachedDomAttributes objectForKey:uid];
+    NSString *key = [NSString stringWithFormat:@"%@-%@-%@", imageName, placeholdrImageName, uid];
+    if ([_cachedDomAttributes objectForKey:key]) {
+        return [_cachedDomAttributes objectForKey:key];
     } else {
         NSLog(@"Drawing ------ %@", uid);
         UIImageView *imgView = [self genImageView:imageName placeholderImage:placeholdrImageName css:uid];
@@ -153,7 +154,7 @@
         [attrs setObject:imgView forKey:@"imageView"];
         NSValue *rectValue = [NSValue valueWithCGRect:[styleParser rectFor:uid]];
         [attrs setObject:rectValue forKey:@"rect"];
-        [_cachedDomAttributes setObject:attrs forKey:uid];
+        [_cachedDomAttributes setObject:attrs forKey:key];
         return attrs;
     }
 }
