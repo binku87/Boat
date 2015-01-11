@@ -12,9 +12,9 @@
 @implementation ApplicationView
 
 - (void)drawRect:(CGRect)rect {
-    Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"Application.ss"];
+    /*Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"Application.ss"];
     [drawer drawRect:@"background"];
-    [drawer drawText:@"Layout Title" css:@"title"];
+    [drawer drawText:@"Layout Title" css:@"title"];*/
 }
 
 @end

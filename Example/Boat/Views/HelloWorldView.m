@@ -16,7 +16,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"HelloWorld.ss"];
+    /*Drawer *drawer = [[Drawer alloc] initWithStyleFile:@"HelloWorld.ss"];
     UIImageView *logo = [drawer genRemoteImage:@"http://tmeiju.com/images/ios-qrcode.png" placeholderImage:@"login-username.png" css:@"logo"];
     [self addSubview:logo];
     [drawer drawText:@"Boat" css:@"title"];
@@ -36,7 +36,7 @@
     [self addSubview:btnLogin];
 
     ImageButton *btnRegister = [drawer genImageButton:@"login-register" css:@"register_button"];
-    [self addSubview:btnRegister];
+    [self addSubview:btnRegister];*/
 }
 
 @end
