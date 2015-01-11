@@ -13,7 +13,8 @@
 
 @property (nonatomic, retain) NSMutableDictionary *domMap;
 
-- (id) initWithStyleFile:(NSString *)cssFile;
+- (void) reset:(NSDictionary *)options;
+- (id) initWithStyleFile:(NSString *)cssFile options:(NSDictionary *)options;
 - (id) valueFor:(NSString *)uid attr:(NSString *)attr;
 - (CGRect) rectForText:(NSString *)text uid:(NSString *)uid;
 - (UIFont *) fontFor:(NSString *)uid;

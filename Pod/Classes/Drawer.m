@@ -27,9 +27,19 @@
 - (id) initWithStyleFile:(NSString *)cssFile view:(UIView *)v;
 {
     view = v;
-    styleParser = [[StyleParser alloc] initWithStyleFile:cssFile];
+    styleParser = [[StyleParser alloc] initWithStyleFile:cssFile
+                                                 options:@{
+                                                           @"content_width" : [NSString stringWithFormat:@"%f", v.frame.size.width],
+                                                           @"content_height" : [NSString stringWithFormat:@"%f", v.frame.size.height]
+                                                        }];
     _cachedDomAttributes = [NSMutableDictionary new];
     return self;
+}
+
+- (void) reset
+{
+    [styleParser reset:@{ @"content_width" : [NSString stringWithFormat:@"%f", view.frame.size.width],
+                          @"content_height" : [NSString stringWithFormat:@"%f", view.frame.size.height] }];
 }
 
 - (CGRect) rectFor:(NSString *)uid {
@@ -180,6 +190,23 @@
     return img;
 }
 
+- (UIImageView *) addImageView:(NSString *)uid
+{
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:[styleParser rectFor:uid]];
+    [self.view addSubview:imgView];
+    if ([styleParser valueFor:uid attr:@"radius"]) {
+        [imgView.layer setMasksToBounds:YES];
+        imgView.layer.cornerRadius = [[styleParser valueFor:uid attr:@"radius"] intValue];
+    }
+    return imgView;
+}
+
+- (UIImageView *) createImageView:(NSString *)uid
+{
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:[styleParser rectFor:uid]];
+    return imgView;
+}
+
 - (UIImageView*) genImageView:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid {
     CGRect rect = [styleParser rectFor:uid];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:rect];
@@ -198,6 +225,69 @@
     return imgView;
 };
 
+- (void) updateImageView:(UIImageView*)imageView imageName:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName
+{
+    UIImage *placeholderImage;
+    if (placeholderImageName != nil) {
+        placeholderImage = [UIImage imageNamed:placeholderImageName];
+    }
+    if (([imageName isEqual:@""] || imageName == nil) && ![placeholderImageName isEqual:@""]) {
+        imageName = placeholderImageName;
+    }
+    if ([imageName hasPrefix:@"http"]) {
+        [imageView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:placeholderImage];
+    } else {
+        if ([imageName isEqual:@""]) return;
+        NSArray *fileAttrs = [imageName componentsSeparatedByString:@"."];
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
+        if ([imageName hasSuffix:@".gif"]) {
+            NSData *data = [NSData dataWithContentsOfFile:filePath];
+            imageView.image = [UIImage animatedImageWithAnimatedGIFData:data];
+        } else {
+            imageView.image = [UIImage imageWithContentsOfFile:filePath];
+        }
+    }
+}
+
+- (UITextField*) addTextInput:(NSString *)placeholder css:(NSString *)uid
+{
+    UITextField *textField = [[UITextField alloc] initWithFrame:[styleParser rectFor:uid]];
+    textField.placeholder = placeholder;
+    textField.font = [styleParser fontFor:uid];
+    [view addSubview:textField];
+    return textField;
+}
+
+- (UITextField*) addTextInput:(NSString *)placeholder delegate:(id)delegate css:(NSString *)uid
+{
+    UITextField *textField = [self addTextInput:placeholder css:uid];
+    textField.delegate = delegate;
+    return textField;
+}
+
+- (UITableView*) addTableView:(id)delegate uid:(NSString *)uid
+{
+    UITableView *tv = [[UITableView alloc] initWithFrame:[styleParser rectFor:uid]];
+    tv.delegate = delegate;
+    tv.dataSource = delegate;
+    tv.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    [view addSubview:tv];
+    return tv;
+}
+
+- (UIWebView *) addWebView:(id)delegate uid:(NSString *)uid {
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:[styleParser rectFor:uid]];
+    webView.scalesPageToFit = YES;
+    webView.delegate = delegate;
+    [view addSubview:webView];
+    return webView;
+}
+
+- (UISwitch *) addSwitchView:(NSString *)uid {
+    UISwitch *switchView = [[UISwitch alloc]initWithFrame:[styleParser rectFor:uid]];
+    [view addSubview:switchView];
+    return switchView;
+}
 
 - (UITextField*) genTextInput:(NSString *)placeholder css:(NSString *)uid
 {
@@ -215,7 +305,6 @@
 }
 
 // HELPER
-
 - (void) drawFillRect:(CGRect)rect radius:(int)radius color:(UIColor *)color
 {
     CGContextRef context = UIGraphicsGetCurrentContext();

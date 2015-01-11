@@ -11,8 +11,11 @@
 
 @interface BoatView : UIView
 
+@property (nonatomic) id controller;
 @property (nonatomic) Drawer *btDrawer;
 
 - (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile;
+- (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile controller:(id)ctrl;
+- (id) initWithFrame:(CGRect)frame controller:(id)ctrl;
 
 @end

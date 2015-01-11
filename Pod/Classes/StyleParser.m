@@ -9,15 +9,32 @@
 #import "StyleParser.h"
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 #define isEmpty(...) ([__VA_ARGS__ isEqual:[NSNull null]] || [__VA_ARGS__ isEqual:@""])
+#define V(X, Y) (X == nil || [X objectForKey:Y] == [NSNull null] ? @"" : ([[X objectForKey:Y] isKindOfClass:[NSNumber class]] ? [[X objectForKey:Y] stringValue] : [X objectForKey:Y]))
+
+@interface StyleParser()
+
+@property(nonatomic) NSString *cssFile;
+@property(nonatomic) NSDictionary *options;
+
+@end
 
 @implementation StyleParser
 
 @synthesize domMap;
 
-- (id) initWithStyleFile:(NSString *)cssFile
+- (id) initWithStyleFile:(NSString *)cssFile options:(NSDictionary *)options
 {
     [self initDomMap:cssFile];
+    _cssFile = cssFile;
+    _options = options;
     return self;
+}
+
+- (void) reset:(NSDictionary *)options
+{
+    _options = options;
+    [domMap removeAllObjects];
+    [self initDomMap:_cssFile];
 }
 
 - (id) valueFor:(NSString *)uid attr:(NSString *)attr
@@ -107,10 +124,10 @@
                                               options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                            attributes:attributes
                                               context:nil];
-        if (![dom objectForKey:@"width"]) {
+        if (![dom objectForKey:@"width"] || [[dom objectForKey:@"width"] isEqualToString:@"0.000000"]) {
             [dom setObject:[NSString stringWithFormat:@"%f", textSpace.size.width] forKey:@"width"];
         }
-        if (![dom objectForKey:@"height"]) {
+        if (![dom objectForKey:@"height"] || [[dom objectForKey:@"height"] isEqualToString:@"0.000000"]) {
             [dom setObject:[NSString stringWithFormat:@"%f", textSpace.size.height] forKey:@"height"];
         }
     }
@@ -204,6 +221,9 @@
 
 - (CGRect) addPadding:(CGRect)originalRect uid:(NSString *)uid
 {
+    if ([uid isEqual:@"shoe_live_cell_content_right"]) {
+        
+    }
     CGRect paddingRect = [self paddingFor:uid];
     originalRect.origin.x -= paddingRect.origin.x;
     originalRect.origin.y -= paddingRect.origin.y;
@@ -242,6 +262,12 @@
     }
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"win_width" withString:[NSString stringWithFormat:@"%f", [self winWidth]]];
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"win_height" withString:[NSString stringWithFormat:@"%f", [self winHeight]]];
+    if ([_options objectForKey:@"content_width"]) {
+        attrVal = [attrVal stringByReplacingOccurrencesOfString:@"content_width" withString:V(_options, @"content_width")];
+    }
+    if ([_options objectForKey:@"content_height"]) {
+        attrVal = [attrVal stringByReplacingOccurrencesOfString:@"content_height" withString:V(_options, @"content_height")];
+    }
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"width" withString:[NSString stringWithFormat:@"%f", width]];
     attrVal = [attrVal stringByReplacingOccurrencesOfString:@"height" withString:[NSString stringWithFormat:@"%f", height]];
     NSExpression *expression = [NSExpression expressionWithFormat:attrVal];
@@ -294,6 +320,8 @@
                     NSArray *keyVal = [formatedLine componentsSeparatedByString:@":"];
                     NSString *key = [[keyVal objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
                     NSString *val = [[keyVal objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                    
+                    val = [self preHandleForSpecialValue:dom attr:key value:val];
                     [dom setObject:val forKey:key];
                 }
             }
@@ -302,6 +330,24 @@
     @catch (NSException *exception) {
         alert([NSString stringWithFormat:@"Boat: Parse css file %@ failure", cssFile]);
     }
+}
+
+- (NSString *) preHandleForSpecialValue:(NSDictionary *)currentDom attr:(NSString*)attr value:(NSString*)value {
+    if ([attr isEqual:@"top"] && [value isEqual:@"middle"]) {
+        if ([currentDom objectForKey:@"relative"]) {
+            value = [NSString stringWithFormat:@"((%@.height - height) / 2)", [currentDom objectForKey:@"relative"]];
+        } else {
+            value = @"(win_height - height) / 2)";
+        }
+    }
+    if ([attr isEqual:@"left"] && [value isEqual:@"center"]) {
+        if ([currentDom objectForKey:@"relative"]) {
+            value = [NSString stringWithFormat:@"((%@.width - width) / 2)", [currentDom objectForKey:@"relative"]];
+        } else {
+            value = @"(win_width - width) / 2)";
+        }
+    }
+    return value;
 }
 
 - (NSMutableDictionary*) getCombineDom:(NSString *)uid {

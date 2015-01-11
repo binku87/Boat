@@ -10,16 +10,33 @@
 
 @implementation BoatView
 
-@synthesize btDrawer;
+@synthesize controller, btDrawer;
+
+- (id) initWithFrame:(CGRect)frame controller:(id)ctrl
+{
+    self.controller = ctrl;
+    self = [super initWithFrame:frame];
+    return self;
+}
+
+- (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile controller:(id)ctrl
+{
+    self.controller = ctrl;
+    self = [self initWithFrame:frame styleFile:styleFile];
+    return self;
+}
 
 - (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        [self setBackgroundColor:[UIColor whiteColor]];
-    }
+    self.backgroundColor = [UIColor whiteColor];
     btDrawer = [[Drawer alloc] initWithStyleFile:styleFile view:self];
     return self;
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [btDrawer reset];
 }
 
 @end
