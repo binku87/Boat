@@ -1,0 +1,1 @@
+../../../IGFastImage/IGFastImage/FastImage/IGFastImage.h

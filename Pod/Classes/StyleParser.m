@@ -221,9 +221,6 @@
 
 - (CGRect) addPadding:(CGRect)originalRect uid:(NSString *)uid
 {
-    if ([uid isEqual:@"shoe_live_cell_content_right"]) {
-        
-    }
     CGRect paddingRect = [self paddingFor:uid];
     originalRect.origin.x -= paddingRect.origin.x;
     originalRect.origin.y -= paddingRect.origin.y;
