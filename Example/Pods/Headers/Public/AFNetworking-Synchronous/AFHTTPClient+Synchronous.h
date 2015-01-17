@@ -1,0 +1,1 @@
+../../../AFNetworking-Synchronous/AFHTTPClient+Synchronous.h

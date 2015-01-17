@@ -1,1 +1,0 @@
-PODS_BOAT_IGFASTIMAGE_OTHER_LDFLAGS = -framework "MobileCoreServices" -framework "SystemConfiguration"

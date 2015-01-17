@@ -1,44 +1,19 @@
 AFNetworking-Synchronous
 ========================
 
-A minimal category which extends [AFNetworking][] to support synchronous
-requests.
+A minimal category which extends [AFNetworking][], specifically
+`AFHTTPClient`, to support synchronous requests.
 
-
-## Example (1.x)
-
-```rb
-  pod 'AFNetworking', '~> 1.0'
-  pod 'AFNetworking-Synchronous/1.x'
-```
+## Example
 
 ```objective-c
-AFHTTPClient *client = [[AFHTTPClient alloc] initWithBaseURL:...];
 NSError *error = nil;
-NSData *result = [client synchronouslyGetPath:@"/document/123"
-                                   parameters:paramDict
-                                    operation:NULL
-                                        error:&error];
+NSData *result =
+[[AFHTTPClient sharedClient] synchronouslyGetPath:@"/document/123"
+                                       parameters:paramDict
+                                        operation:NULL
+                                            error:&error];
 ```
-
-## Example (2.x)
-
-```rb
-  pod 'AFNetworking', '~> 2.0'
-  pod 'AFNetworking-Synchronous/2.x'
-```
-
-```objective-c
-AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-NSError *error = nil;
-NSData *result = [manager syncGET:@"/document/123"
-                       parameters:paramDict
-                        operation:NULL
-                            error:&error];
-```
-
-Currently there is no support for AFHTTPSessionManager.
-
 
 ## Discussion
 
@@ -73,12 +48,9 @@ This category is suitable for most of the request operation subclasses built int
  
 All custom subclasses must override `-responseObject`. See `AFHTTPRequestOperation+ResponseObject.h` for more information.
 
+## Notes
 
-## Acknowledgements
+Developed for Mac OS and iOS. Tested on Mac OS.
 
-- [EliSchleifer][] for AFNetworking 2.x support
-
-
-[EliSchleifer]: https://github.com/EliSchleifer
 [AFNetworking]: https://github.com/AFNetworking/AFNetworking
 [using-completion-blocks]: https://github.com/noa--/AFNetworking-Synchronous/tree/using-completion-blocks

@@ -1,1 +1,0 @@
-PODS_TESTS_IGFASTIMAGE_OTHER_LDFLAGS = -framework "MobileCoreServices" -framework "SystemConfiguration"

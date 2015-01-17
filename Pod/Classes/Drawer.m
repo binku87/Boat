@@ -169,6 +169,27 @@
     }
 }
 
+- (UIImage*) genImage:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid
+{
+    CGRect rect = [styleParser rectFor:uid];
+    UIImage *img;
+    if ([imageName hasPrefix:@"http"]) {
+        UIImageView *imgView = [[UIImageView alloc] initWithFrame:rect];
+        [imgView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:[UIImage imageNamed:placeholderImageName]];
+        img = [UIImage imageWithCGImage:imgView.image.CGImage];
+    } else {
+        NSArray *fileAttrs = [imageName componentsSeparatedByString:@"."];
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
+        if ([imageName hasSuffix:@".gif"]) {
+            NSData *data = [NSData dataWithContentsOfFile:filePath];
+            img = [UIImage animatedImageWithAnimatedGIFData:data];
+        } else {
+            img = [UIImage imageWithContentsOfFile:filePath];
+        }
+    }
+    return img;
+}
+
 - (UIImageView *) addImageView:(NSString *)uid
 {
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:[styleParser rectFor:uid]];
