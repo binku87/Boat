@@ -22,7 +22,7 @@
 
 @implementation Drawer
 
-@synthesize styleParser, view;
+@synthesize styleParser, view, touchedColorRects;
 
 - (id) initWithStyleFile:(NSString *)cssFile view:(UIView *)v;
 {
@@ -33,11 +33,13 @@
                                                            @"content_height" : [NSString stringWithFormat:@"%f", v.frame.size.height]
                                                         }];
     _cachedDomAttributes = [NSMutableDictionary new];
+    touchedColorRects = [NSMutableDictionary new];
     return self;
 }
 
 - (void) reset
 {
+    touchedColorRects = [NSMutableDictionary new];
     [styleParser reset:@{ @"content_width" : [NSString stringWithFormat:@"%f", view.frame.size.width],
                           @"content_height" : [NSString stringWithFormat:@"%f", view.frame.size.height] }];
 }
@@ -46,30 +48,39 @@
     return [styleParser rectFor:uid];
 }
 
-- (CGRect) rectForText:(NSString *)text css:(NSString *)uid {
-    return [styleParser rectForText:text uid:uid];
+- (CGRect) rectForText:(NSString *)text css:(NSString *)uid options:(NSDictionary *)options{
+    CGRect rect = [styleParser rectForText:text uid:uid];
+    if (options) {
+        rect = [self offsetRect:rect options:options];
+    }
+    return [styleParser addPadding:rect uid:uid];
 };
 
 - (CGRect) drawRect:(NSString *)uid options:(NSDictionary *)options {
     CGRect rect = [styleParser rectFor:uid];
-    if ([options objectForKey:@"offsetX"]) rect.origin.x += [[options objectForKey:@"offsetX"] floatValue];
-    if ([options objectForKey:@"offsetY"]) rect.origin.y += [[options objectForKey:@"offsetY"] floatValue];
-    if ([options objectForKey:@"offsetWidth"]) rect.size.width += [[options objectForKey:@"offsetWidth"] floatValue];
-    if ([options objectForKey:@"offsetHeight"]) rect.size.height += [[options objectForKey:@"offsetHeight"] floatValue];
+    if (options) {
+        rect = [self offsetRect:rect options:options];
+    }
     UIColor *color = [styleParser colorFor:uid];
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    if ([[styleParser valueFor:uid attr:@"fill"] isEqualToString:@"0"]) {
-        NSString *radius = [styleParser valueFor:uid attr:@"radius"];
-        if (radius == nil) {
-            radius = @"2";
-        }
-        UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:[radius intValue]];
-        CGContextSetStrokeColorWithColor(context, color.CGColor);
-        [bezierPath stroke];
+    CGFloat radius = [styleParser radiusFor:uid];
+
+    if ([styleParser valueFor:uid attr:@"border-color"]) {
+        UIColor *borderColor = [styleParser borderColorFor:uid];
+        CGFloat borderWidth = [styleParser borderWidthFor:uid];
+        [self drawFillRect:rect radius:radius color:borderColor];
+
+        CGRect backgroundRect = rect;
+        backgroundRect.origin.x += borderWidth;
+        backgroundRect.origin.y += borderWidth;
+        backgroundRect.size.width -= borderWidth * 2;
+        backgroundRect.size.height -= borderWidth * 2;
+
+        [self drawFillRect:backgroundRect radius:(radius) color:color];
     } else {
-        const CGFloat* colors = CGColorGetComponents(color.CGColor);
-        CGContextSetRGBFillColor(context, colors[0], colors[1], colors[2], 1.0);
-        CGContextFillRect(context, rect);
+        [self drawFillRect:rect radius:radius color:color];
+    }
+    if ([styleParser valueFor:uid attr:@"touched-color"]) {
+        [touchedColorRects setObject:[NSValue valueWithCGRect:rect] forKey:uid];
     }
     return rect;
 }
@@ -80,35 +91,31 @@
 }
 
 - (CGRect) drawText:(NSString *)text css:(NSString *)uid options:(NSDictionary *)options {
-    if ([text isEqual:[NSNull null]]) {
+    if (text == nil || [text isEqual:[NSNull null]] ) {
         text = @"";
     }
-    
+
     CGRect rect = [styleParser rectForText:text uid:uid];
-    if ([options objectForKey:@"offsetX"]) rect.origin.x += [[options objectForKey:@"offsetX"] floatValue];
-    if ([options objectForKey:@"offsetY"]) rect.origin.y += [[options objectForKey:@"offsetY"] floatValue];
-    if ([options objectForKey:@"offsetWidth"]) rect.size.width += [[options objectForKey:@"offsetWidth"] floatValue];
-    if ([options objectForKey:@"offsetHeight"]) rect.size.height += [[options objectForKey:@"offsetHeight"] floatValue];
-    UIFont *font = [styleParser fontFor:uid];
+    //[self drawFillRect:rect radius:0 color:[UIColor redColor]];
+    rect = [self offsetRect:rect options:options];
     UIColor *color = [styleParser colorFor:uid];
     [color set];
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    NSDictionary *attributes = @{NSFontAttributeName: font,
+    NSDictionary *attributes = @{NSFontAttributeName: [styleParser fontFor:uid],
                                  NSForegroundColorAttributeName: color,
                                  NSParagraphStyleAttributeName: paragraphStyle };
     if ([styleParser valueFor:uid attr:@"background-color"]) {
-        CGFloat textWidth = [styleParser widthForTextWithHeight:text uid:uid height:rect.size.height];
-        CGFloat textHeight = [styleParser heightForTextWithWidth:text uid:uid width:rect.size.width];
-        CGRect backgroundRect = CGRectMake(rect.origin.x, rect.origin.y, textWidth, textHeight);
-        backgroundRect = [styleParser addPadding:backgroundRect uid:uid];
-        [self drawFillRect:backgroundRect radius:4 color:[styleParser backgroundColorFor:uid]];
-        [text drawInRect:rect withAttributes:attributes];
-        return backgroundRect;
-    } else {
-        [text drawInRect:rect withAttributes:attributes];
-        return rect;
+        CGRect rectWithPadding = [self rectForText:text css:uid options:options];
+        [self drawFillRect:rectWithPadding radius:4 color:[styleParser backgroundColorFor:uid]];
     }
+    if ([styleParser valueFor:uid attr:@"padding"]) {
+        CGRect padding = [styleParser paddingFor:uid];
+        rect.origin.x += padding.origin.x;
+        rect.origin.y += padding.origin.y;
+    }
+    [text drawInRect:rect withAttributes:attributes];
+    return rect;
 }
 
 - (NSDictionary *) cachedDrawTextAttrs:(NSString *)text uid:(NSString *)uid
@@ -134,32 +141,41 @@
     return [self drawText:text css:uid options:@{}];
 }
 
-- (CGRect) drawImage:(NSString *)imageName css:(NSString *)uid {
+- (CGRect) drawImage:(NSString *)imageName css:(NSString *)uid options:(NSDictionary *)options{
+    if (options == nil) { options = @{}; }
     if ([imageName hasPrefix:@"http"]) {
         NSLog(@"Boat: [Drawer] Doesn't support draw remote image");
         return CGRectMake(0, 0, 0, 0);
     }
-    return [self drawImage:imageName placeholderImage:nil css:uid];
+    return [self drawImage:imageName placeholderImage:nil css:uid options:options];
 }
 
-- (CGRect) drawImage:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid
+- (CGRect) drawImageWithImage:(UIImage *)image css:(NSString *)uid options:(NSDictionary *)options{
+    CGRect rect = [self.styleParser rectFor:uid];
+    rect = [self offsetRect:rect options:options];
+    [image drawInRect:rect];
+    return rect;
+}
+
+- (CGRect) drawImage:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid options:(NSDictionary *)options
 {
+    if (options == nil) { options = @{}; }
     if([imageName isEqual:[NSNull null]]) return CGRectMake(0, 0, 0, 0);
-    NSDictionary *attrs = [self cachedDrawImage:imageName placeholdrImage:placeholderImageName css:uid];
+    NSDictionary *attrs = [self cachedDrawImage:imageName placeholdrImage:placeholderImageName css:uid options:options];
     UIImageView *imgView = [attrs objectForKey:@"imageView"];
     CGRect rect = [(NSValue*)[attrs objectForKey:@"rect"] CGRectValue];
+    rect = [self offsetRect:rect options:options];
     [imgView.image drawInRect:rect];
     return rect;
 }
 
-- (NSDictionary *)cachedDrawImage:(NSString *)imageName placeholdrImage:(NSString *)placeholdrImageName css:(NSString *)uid
+- (NSDictionary *)cachedDrawImage:(NSString *)imageName placeholdrImage:(NSString *)placeholdrImageName css:(NSString *)uid options:(NSDictionary *)options
 {
     NSString *key = [NSString stringWithFormat:@"%@-%@-%@", imageName, placeholdrImageName, uid];
-    if ([_cachedDomAttributes objectForKey:key]) {
+    if (![options objectForKey:@"force"] && [_cachedDomAttributes objectForKey:key]) {
         return [_cachedDomAttributes objectForKey:key];
     } else {
-        NSLog(@"Drawing ------ %@", uid);
-        UIImageView *imgView = [self genImageView:imageName placeholderImage:placeholdrImageName css:uid];
+        UIImageView *imgView = [self createImageView:imageName placeholderImage:placeholdrImageName css:uid options:nil];
         NSMutableDictionary *attrs = [NSMutableDictionary new];
         [attrs setObject:imgView forKey:@"imageView"];
         NSValue *rectValue = [NSValue valueWithCGRect:[styleParser rectFor:uid]];
@@ -169,31 +185,18 @@
     }
 }
 
-- (UIImage*) genImage:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid
+- (UIImageView *) addImageView:(NSString *)uid options:(NSDictionary *)options
 {
-    CGRect rect = [styleParser rectFor:uid];
-    UIImage *img;
-    if ([imageName hasPrefix:@"http"]) {
-        UIImageView *imgView = [[UIImageView alloc] initWithFrame:rect];
-        [imgView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:[UIImage imageNamed:placeholderImageName]];
-        img = [UIImage imageWithCGImage:imgView.image.CGImage];
-    } else {
-        NSArray *fileAttrs = [imageName componentsSeparatedByString:@"."];
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
-        if ([imageName hasSuffix:@".gif"]) {
-            NSData *data = [NSData dataWithContentsOfFile:filePath];
-            img = [UIImage animatedImageWithAnimatedGIFData:data];
-        } else {
-            img = [UIImage imageWithContentsOfFile:filePath];
-        }
-    }
-    return img;
+    UIImageView *imageView = [self createImageView:uid options:options];
+    [self.view addSubview:imageView];
+    return imageView;
 }
 
-- (UIImageView *) addImageView:(NSString *)uid
+- (UIImageView *) createImageView:(NSString *)uid options:(NSDictionary *)options
 {
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:[styleParser rectFor:uid]];
-    [self.view addSubview:imgView];
+    if (options == nil) { options = @{}; }
+    CGRect rect = [self offsetRect:[styleParser rectFor:uid] options:options];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:rect];
     if ([styleParser valueFor:uid attr:@"radius"]) {
         [imgView.layer setMasksToBounds:YES];
         imgView.layer.cornerRadius = [[styleParser valueFor:uid attr:@"radius"] intValue];
@@ -201,17 +204,18 @@
     return imgView;
 }
 
-- (UIImageView *) createImageView:(NSString *)uid
+- (UIImageView *) createImageView:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName  css:(NSString *)uid options:(NSDictionary *)options
 {
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:[styleParser rectFor:uid]];
-    return imgView;
-}
-
-- (UIImageView*) genImageView:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName css:(NSString *)uid {
+    if (options == nil) { options = @{}; }
     CGRect rect = [styleParser rectFor:uid];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:rect];
     if ([imageName hasPrefix:@"http"]) {
-        [imgView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:[UIImage imageNamed:placeholderImageName]];
+        [imgView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:[UIImage imageNamed:placeholderImageName] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            imgView.alpha = 0.0;
+            [UIView transitionWithView:imgView duration:3.0 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                imgView.alpha = 1.0;
+            } completion:NULL];
+        }];
     } else {
         NSArray *fileAttrs = [imageName componentsSeparatedByString:@"."];
         NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
@@ -223,9 +227,27 @@
         }
     }
     return imgView;
-};
+}
 
-- (void) updateImageView:(UIImageView*)imageView imageName:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName
+- (UIImage *) getStaticImage:(NSString *)imageName
+{
+    UIImage *image;
+    if ([imageName isEqual:@""] || imageName == nil) {
+        imageName = @"default_90x70.png";
+    }
+    
+    NSArray *fileAttrs = [imageName componentsSeparatedByString:@"."];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileAttrs objectAtIndex:0] ofType:[fileAttrs objectAtIndex:1]];
+    if ([imageName hasSuffix:@".gif"]) {
+        NSData *data = [NSData dataWithContentsOfFile:filePath];
+        image = [UIImage animatedImageWithAnimatedGIFData:data];
+    } else {
+        image = [UIImage imageWithContentsOfFile:filePath];
+    }
+    return image;
+}
+
+- (void) updateImageView:(UIImageView*)imageView imageName:(NSString *)imageName placeholderImage:(NSString *)placeholderImageName options:(NSDictionary *)options
 {
     UIImage *placeholderImage;
     if (placeholderImageName != nil) {
@@ -235,7 +257,12 @@
         imageName = placeholderImageName;
     }
     if ([imageName hasPrefix:@"http"]) {
-        [imageView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:placeholderImage];
+        [imageView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:placeholderImage completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            imageView.alpha = 0;
+            [UIView transitionWithView:imageView duration:1.0 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                imageView.alpha = 1.0;
+            } completion:NULL];
+        }];
     } else {
         if ([imageName isEqual:@""]) return;
         NSArray *fileAttrs = [imageName componentsSeparatedByString:@"."];
@@ -297,13 +324,6 @@
     return textUserName;
 }
 
-- (ImageButton*) genImageButton:(NSString *)fileName css:(NSString *)uid
-{
-    NSArray *fileAttrs = [fileName componentsSeparatedByString:@"."];
-    ImageButton *btnLogin = [[ImageButton alloc] initWithFrame:[styleParser rectFor:uid] imageNamed:[fileAttrs objectAtIndex:0]];
-    return btnLogin;
-}
-
 // HELPER
 - (void) drawFillRect:(CGRect)rect radius:(int)radius color:(UIColor *)color
 {
@@ -311,5 +331,18 @@
     UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius];
     CGContextSetFillColorWithColor(context, color.CGColor);
     [bezierPath fill];
+}
+
+- (CGRect) offsetRect:(CGRect)rect options:(NSDictionary *)options
+{
+    if ([options objectForKey:@"x"]) rect.origin.x = [[options objectForKey:@"x"] floatValue];
+    if ([options objectForKey:@"y"]) rect.origin.x = [[options objectForKey:@"y"] floatValue];
+    if ([options objectForKey:@"width"]) rect.size.width = [[options objectForKey:@"width"] floatValue];
+    if ([options objectForKey:@"height"]) rect.size.height = [[options objectForKey:@"height"] floatValue];
+    if ([options objectForKey:@"offsetX"]) rect.origin.x += [[options objectForKey:@"offsetX"] floatValue];
+    if ([options objectForKey:@"offsetY"]) rect.origin.y += [[options objectForKey:@"offsetY"] floatValue];
+    if ([options objectForKey:@"offsetWidth"]) rect.size.width += [[options objectForKey:@"offsetWidth"] floatValue];
+    if ([options objectForKey:@"offsetHeight"]) rect.size.height += [[options objectForKey:@"offsetHeight"] floatValue];
+    return rect;
 }
 @end

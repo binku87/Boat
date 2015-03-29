@@ -39,33 +39,67 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)switchToView:(UIView *)contentView {
-    BOOL hasThisView = NO;
-    for (UIView * v in [self.view subviews]) {
-        if(v == contentView) {
-            hasThisView = YES;
-            break;
-        } else {
-            [v removeFromSuperview];
-        }
+-(void)switchToView:(UIView *)contentView animation:(NSString *)animation {
+    UIView *previousView;
+    contentView.frame = [self contentRect];
+    if ([[self.view subviews] count] > 0) {
+        previousView = [[self.view subviews] objectAtIndex:0];
     }
-    if (hasThisView) {
-        [self.view bringSubviewToFront:contentView];
-    } else {
-        contentView.frame = [self contentRect];
-        [self.view addSubview:contentView];
-    }
-    CATransition *animation = [CATransition animation];
-    animation.delegate = self;
-    animation.duration = 0.1;
-    animation.timingFunction = UIViewAnimationCurveEaseInOut;
-    animation.type = kCATransitionPush;
-    animation.subtype = kCATransitionFromLeft;
-    //[[contentView layer] addAnimation:animation forKey:@"animation"];
+    [self showView:contentView hideView:previousView withAnimation:animation];
 }
 
 - (CGRect)contentRect {
     alert(@"WARNING: doesn't override layout's contentRect yet");
     return CGRectMake(0, 0, 0, 0);
+}
+
+- (void) showView:(UIView *)contentView hideView:(UIView *)previousView withAnimation:(NSString *)animation
+{
+    float interval = 0.3;
+    if (animation == nil) {
+        [previousView removeFromSuperview];
+        [self.view addSubview:contentView];
+        return;
+    }
+    if ([animation isEqual: @"RightToLeft"]) {
+        [UIView animateWithDuration:interval delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+            CGRect frame = previousView.frame;
+            frame.origin.x -= 50;
+            previousView.frame = frame;
+        } completion:^(BOOL finished) {
+            [previousView removeFromSuperview];
+        }];
+        
+        [self.view addSubview:contentView];
+        CGRect originalFrame = contentView.frame;
+        CGRect frame = contentView.frame;
+        frame.origin.x += frame.size.width;
+        contentView.frame = frame;
+        [UIView animateWithDuration:interval delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+            contentView.frame = originalFrame;
+        } completion:^(BOOL finished) {
+        }];
+        return;
+    }
+    if ([animation isEqual: @"LeftToRight"]) {
+        [UIView animateWithDuration:interval delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+            CGRect frame = previousView.frame;
+            frame.origin.x = frame.size.width;
+            previousView.frame = frame;
+        } completion:^(BOOL finished) {
+            [previousView removeFromSuperview];
+        }];
+        
+        CGRect originalFrame = contentView.frame;
+        CGRect frame = contentView.frame;
+        frame.origin.x -= 50;
+        contentView.frame = frame;
+        [self.view insertSubview:contentView belowSubview:previousView];
+        [UIView animateWithDuration:interval delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+            contentView.frame = originalFrame;
+        } completion:^(BOOL finished) {
+        }];
+        return;
+    }
 }
 @end

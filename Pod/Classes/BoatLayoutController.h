@@ -16,10 +16,10 @@
 
 @end
 
-@interface BoatLayoutController : BoatViewController<BoatControllerProtocol, BoatLayoutControllerProtocol>
+@interface BoatLayoutController : BoatViewController<BoatLayoutControllerProtocol>
 
 @property (nonatomic, assign) UIView *viewContent;
 
--(void)switchToView:(UIView *)contentView;
+-(void)switchToView:(UIView *)contentView animation:(NSString *)animation;
 
 @end

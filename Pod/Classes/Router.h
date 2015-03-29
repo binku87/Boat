@@ -12,8 +12,10 @@
 
 @interface Router : NSObject
 
-+ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params;
++ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *)params;
++ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *)params animation:(NSString *)animation;
 + (BoatViewController *) controllerByName:(NSString *) viewControllerName;
 + (NSString *)currentContentController;
++ (BOOL)isControllerLoaded:(NSString*)controllerName;
 
 @end

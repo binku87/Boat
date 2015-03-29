@@ -10,6 +10,8 @@
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 #define isEmpty(...) ([__VA_ARGS__ isEqual:[NSNull null]] || [__VA_ARGS__ isEqual:@""])
 #define V(X, Y) (X == nil || [X objectForKey:Y] == [NSNull null] ? @"" : ([[X objectForKey:Y] isKindOfClass:[NSNumber class]] ? [[X objectForKey:Y] stringValue] : [X objectForKey:Y]))
+#define STRINGISPRESENT(...) !([__VA_ARGS__ isEqual:[NSNull null]] || [__VA_ARGS__ isEqual:@""] || __VA_ARGS__ == nil)
+
 
 @interface StyleParser()
 
@@ -104,6 +106,20 @@
     return rect;
 }
 
+- (CGRect) calRectForText:(NSString *)text uid:(NSString *)uid
+{
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    NSDictionary *attributes = @{NSFontAttributeName: [self fontFor:uid],
+                                 NSParagraphStyleAttributeName: paragraphStyle };
+    CGFloat textMaxWidth = self.winWidth;
+    CGRect textSpace = [text boundingRectWithSize:CGSizeMake(textMaxWidth, 10000)
+                                          options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                       attributes:attributes
+                                          context:nil];
+    return textSpace;
+}
+
 - (CGRect) rectForText:(NSString *)text uid:(NSString *)uid
 {
     if (isEmpty(uid)) {
@@ -116,11 +132,11 @@
         paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
         NSDictionary *attributes = @{NSFontAttributeName: [self fontFor:uid],
                                      NSParagraphStyleAttributeName: paragraphStyle };
-        CGFloat textMaxWidth = [self calVal:[dom objectForKey:@"width"] width:0 height:0];
-        if(textMaxWidth == 0) textMaxWidth = self.winWidth;
-        CGFloat textMaxHeight = [self calVal:[dom objectForKey:@"height"] width:0 height:0];
-        if(textMaxHeight == 0) textMaxHeight = 1000;
-        CGRect textSpace = [text boundingRectWithSize:CGSizeMake(textMaxWidth, textMaxHeight)
+        CGFloat textMaxWidth = self.winWidth;
+        if (STRINGISPRESENT([dom objectForKey:@"max-width"])) {
+            textMaxWidth = [self calVal:[dom objectForKey:@"max-width"] width:0 height:0];
+        }
+        CGRect textSpace = [text boundingRectWithSize:CGSizeMake(textMaxWidth, 10000)
                                               options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                            attributes:attributes
                                               context:nil];
@@ -157,46 +173,51 @@
     return font;
 }
 
-- (UIColor *) colorFor:(NSString *)uid
-{
+- (CGFloat) radiusFor:(NSString *)uid {
     if (isEmpty(uid)) {
         alert(@"uid Can't be blank");
-        return nil;
+        return 0;
     }
     NSMutableDictionary *dom = [self getCombineDom:uid];
-    NSString *colorAttr = [dom objectForKey:@"color"];
-    UIColor *color = [UIColor grayColor];
-    if (colorAttr) {
-        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@"rgb(" withString:@""];
-        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@")" withString:@""];
-        NSArray *rgb = [colorAttr componentsSeparatedByString:@","];
-        float rVal = [(NSString *)[rgb objectAtIndex:0] floatValue];
-        float gVal = [(NSString *)[rgb objectAtIndex:1] floatValue];
-        float bVal = [(NSString *)[rgb objectAtIndex:2] floatValue];
-        color = [UIColor colorWithRed:rVal/255.0f green:gVal/255.0f blue:bVal/255.0f alpha:1];
+    CGFloat radius = [[dom objectForKey:@"radius"] floatValue];
+    if (!radius) {
+        radius = 0;
     }
-    return color;
+    
+    return radius;
+}
+
+- (CGFloat) borderWidthFor:(NSString *)uid {
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return 0;
+    }
+    NSMutableDictionary *dom = [self getCombineDom:uid];
+    CGFloat borderWidth = [[dom objectForKey:@"border-width"] floatValue];
+    if (!borderWidth) {
+        borderWidth = 1;
+    }
+    
+    return borderWidth;
+}
+
+- (UIColor *) borderColorFor:(NSString *)uid {
+    return [self parseColor:@"border-color" uid:uid];
+}
+
+- (UIColor *) colorFor:(NSString *)uid
+{
+    return [self parseColor:@"color" uid:uid];
 }
 
 - (UIColor *) backgroundColorFor:(NSString *)uid
 {
-    if (isEmpty(uid)) {
-        alert(@"uid Can't be blank");
-        return nil;
-    }
-    NSMutableDictionary *dom = [self getCombineDom:uid];
-    NSString *colorAttr = [dom objectForKey:@"background-color"];
-    UIColor *color = [UIColor grayColor];
-    if (colorAttr) {
-        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@"rgb(" withString:@""];
-        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@")" withString:@""];
-        NSArray *rgb = [colorAttr componentsSeparatedByString:@","];
-        float rVal = [(NSString *)[rgb objectAtIndex:0] floatValue];
-        float gVal = [(NSString *)[rgb objectAtIndex:1] floatValue];
-        float bVal = [(NSString *)[rgb objectAtIndex:2] floatValue];
-        color = [UIColor colorWithRed:rVal/255.0f green:gVal/255.0f blue:bVal/255.0f alpha:1];
-    }
-    return color;
+    return [self parseColor:@"background-color" uid:uid];
+}
+
+- (UIColor *) touchedColorFor:(NSString *)uid
+{
+    return [self parseColor:@"touched-color" uid:uid];
 }
 
 - (CGRect) paddingFor:(NSString *)uid
@@ -221,9 +242,6 @@
 
 - (CGRect) addPadding:(CGRect)originalRect uid:(NSString *)uid
 {
-    if ([uid isEqual:@"shoe_live_cell_content_right"]) {
-        
-    }
     CGRect paddingRect = [self paddingFor:uid];
     originalRect.origin.x -= paddingRect.origin.x;
     originalRect.origin.y -= paddingRect.origin.y;
@@ -245,6 +263,7 @@
 
 - (CGFloat) calVal:(NSString *)_attrVal width:(CGFloat)width height:(CGFloat)height
 {
+    NSString *aa = _attrVal;
     if(_attrVal == nil) return 0;
     NSString *attrVal = [_attrVal copy];
     for (NSString *uid in [domMap allKeys]) {
@@ -337,14 +356,14 @@
         if ([currentDom objectForKey:@"relative"]) {
             value = [NSString stringWithFormat:@"((%@.height - height) / 2)", [currentDom objectForKey:@"relative"]];
         } else {
-            value = @"(win_height - height) / 2)";
+            value = @"((win_height - height) / 2)";
         }
     }
     if ([attr isEqual:@"left"] && [value isEqual:@"center"]) {
         if ([currentDom objectForKey:@"relative"]) {
             value = [NSString stringWithFormat:@"((%@.width - width) / 2)", [currentDom objectForKey:@"relative"]];
         } else {
-            value = @"(win_width - width) / 2)";
+            value = @"((win_width - width) / 2)";
         }
     }
     return value;
@@ -417,4 +436,30 @@
                                           context:nil];
     return textSpace.size.height;
 }
+
+- (UIColor *) parseColor:(NSString *)attr uid:(NSString *)uid
+{
+    if (isEmpty(uid)) {
+        alert(@"uid Can't be blank");
+        return nil;
+    }
+    NSMutableDictionary *dom = [self getCombineDom:uid];
+    NSString *colorAttr = [dom objectForKey:attr];
+    UIColor *color = [UIColor grayColor];
+    if (colorAttr) {
+        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@"rgb(" withString:@""];
+        colorAttr = [colorAttr stringByReplacingOccurrencesOfString:@")" withString:@""];
+        NSArray *rgb = [colorAttr componentsSeparatedByString:@","];
+        float rVal = [(NSString *)[rgb objectAtIndex:0] floatValue];
+        float gVal = [(NSString *)[rgb objectAtIndex:1] floatValue];
+        float bVal = [(NSString *)[rgb objectAtIndex:2] floatValue];
+        float aVal = 1;
+        if ([rgb count] > 3) {
+            aVal = [(NSString *)[rgb objectAtIndex:3] floatValue];
+        }
+        color = [UIColor colorWithRed:rVal/255.0f green:gVal/255.0f blue:bVal/255.0f alpha:aVal];
+    }
+    return color;
+}
+
 @end

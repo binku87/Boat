@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "BoatControllerProtocol.h"
 
-@interface BoatViewController : UIViewController<BoatControllerProtocol>
+@interface BoatViewController : UIViewController
+
+@property (nonatomic) NSMutableDictionary *params;
+
+- (NSString *) layoutName;
+- (BOOL) beforeFilter;
+- (void) doAction;
+- (NSDictionary *) layoutExtraParams;
 
 @end

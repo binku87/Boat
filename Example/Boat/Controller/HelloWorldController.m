@@ -3,7 +3,7 @@
 
 @interface HelloWorldController ()
 
-@property (nonatomic) HelloWorldView *viewHelloWord;
+@property (nonatomic) HelloWorldView *view;
 
 @end
 
@@ -12,10 +12,7 @@
 - (id)init
 {
     if (self) {
-        self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        self.viewHelloWord = [[HelloWorldView alloc] initWithFrame:self.view.frame];
-        self.viewHelloWord.backgroundColor = [UIColor clearColor];
-        [self.view addSubview:self.viewHelloWord];
+        self.view = [[HelloWorldView alloc] initWithFrame:[[UIScreen mainScreen] bounds] controller:self];
     }
     return self;
 }
@@ -26,18 +23,19 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (NSDictionary *) layoutExtraParams {
-    return @{};
-}
-
 - (NSString *) layoutName
 {
     return @"Application";
 }
 
-- (void) refreshView:(NSDictionary *)params
+- (BOOL) beforeFilter
 {
+    if ([self.params objectForKey:@"back"]) { return false; }
+    return true;
 }
 
+- (void) doAction
+{
+}
 @end
 

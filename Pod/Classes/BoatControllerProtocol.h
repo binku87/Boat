@@ -12,7 +12,7 @@
 @protocol BoatControllerProtocol
 
 - (NSString *) layoutName;
-- (void) refreshView:(NSDictionary *)params;
+- (void) renderView:(NSDictionary *)params;
 - (NSDictionary *) layoutExtraParams;
 
 @end

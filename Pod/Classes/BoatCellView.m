@@ -19,7 +19,7 @@
     if (self) {
         [self setBackgroundColor:[UIColor whiteColor]];
     }
-    btDrawer = [[Drawer alloc] initWithStyleFile:styleFile view:self];
+    btDrawer = [[Drawer alloc] initWithStyleFile:styleFile view:self.contentView];
     return self;
 }
 
@@ -36,5 +36,10 @@
 - (void)drawRect:(CGRect)rect
 {
     [btDrawer reset];
+}
+
+- (UIView *) cellView
+{
+    return [self.contentView.subviews firstObject];
 }
 @end

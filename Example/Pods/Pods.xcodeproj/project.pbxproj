@@ -1653,14 +1653,15 @@
 		CDA225D0EEF4B2FE20DA567E /* Boat */ = {
 			isa = PBXGroup;
 			children = (
-				E4DF2BC66F68FE49B62ED2CD /* Support Files */,
-				D06317F70C503F7B02755D58 /* APIClient.h */,
-				7B6DE4E141980BF85CFBDCD7 /* APIClient.m */,
 				F076FDFEA9FB1E3D1E657C0F /* ActiveRecord.h */,
 				472C75971CADFEB2AA1126B2 /* ActiveRecord.m */,
+				D06317F70C503F7B02755D58 /* APIClient.h */,
+				7B6DE4E141980BF85CFBDCD7 /* APIClient.m */,
 				308B6DA40D20680E29C86380 /* BoatCellView.h */,
 				28E35FB24E66EE5AF344C60E /* BoatCellView.m */,
 				2B23113B3B1B1B84A8925E01 /* BoatControllerProtocol.h */,
+				34158C6E1A622CCC00B9327B /* BoatDom.h */,
+				34158C6F1A622CCC00B9327B /* BoatDom.m */,
 				C02323ABB03305C18E95BACA /* BoatLayoutController.h */,
 				FB931692C8ADAC139F0ADDBC /* BoatLayoutController.m */,
 				B8E93B4C5AE770BC475CF5C4 /* BoatView.h */,
@@ -1675,8 +1676,7 @@
 				A201DEC4F69CDD9178DC35A2 /* Router.m */,
 				C1332B646C6C44415AA60734 /* StyleParser.h */,
 				71A3DCD46A5F738E1408AFB6 /* StyleParser.m */,
-				34158C6E1A622CCC00B9327B /* BoatDom.h */,
-				34158C6F1A622CCC00B9327B /* BoatDom.m */,
+				E4DF2BC66F68FE49B62ED2CD /* Support Files */,
 			);
 			name = Boat;
 			path = /Users/bin/Codes/iphone/Boat;

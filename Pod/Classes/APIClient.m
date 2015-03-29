@@ -25,8 +25,8 @@
 #define alert(...) UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"信息" message:__VA_ARGS__ delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil]; [alertView show];
 
 //static NSString * const kAFAppDotNetAPIBaseURLString = @"http://192.168.0.101:3000";
-//static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000";
-static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com";
+//static NSString * const kAFAppDotNetAPIBaseURLString = @"http://localhost:3000/v2";
+static NSString * const kAFAppDotNetAPIBaseURLString = @"http://appdev.dunkhome.com/v2/";
 
 @implementation APIClient
 
@@ -110,7 +110,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com
     dispatch_once(&onceToken, ^{
         _sharedClient = [[APIClient alloc] initWithBaseURL:[NSURL URLWithString:kAFAppDotNetAPIBaseURLString]];
     });
-    
+
     return _sharedClient;
 }
 
@@ -119,19 +119,19 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com
     if (!self) {
         return nil;
     }
-    
+
     [self registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
+
     // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
 	[self setDefaultHeader:@"Accept" value:@"application/json"];
-    
+
     // By default, the example ships with SSL pinning enabled for the app.net API pinned against the public key of adn.cer file included with the example. In order to make it easier for developers who are new to AFNetworking, SSL pinning is automatically disabled if the base URL has been changed. This will allow developers to hack around with the example, without getting tripped up by SSL pinning.
     if ([[url scheme] isEqualToString:@"https"] && [[url host] isEqualToString:@"alpha-api.app.net"]) {
         self.defaultSSLPinningMode = AFSSLPinningModePublicKey;
     } else {
         self.defaultSSLPinningMode = AFSSLPinningModeNone;
     }
-    
+
     return self;
 }
 
@@ -154,7 +154,7 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com
     long statusCode = [operation.response statusCode];
     NSURL  *url  = [operation.request URL];
     NSLog(@"\nLoad API ERROR: \n** URL: %@ \n** ERROR CODE: %ld", url, statusCode);
-    
+
     switch (statusCode) {
         case API_UNAUTHORIZED:
             [self unAuthenticationHandler];
@@ -166,12 +166,13 @@ static NSString * const kAFAppDotNetAPIBaseURLString = @"http://app.dunkhome.com
     if (failure) {
         failure(error);
     };
-    
+
     return false;
 }
 
 + (void)handleResponse:(id) result url:(NSString *)url method:(NSString *)method params:(NSDictionary *)params success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSError *error;
+    NSLog(@"\nAPI REQUEST: %@ %@\nPARAMS: %@", [method uppercaseString], url, params);
     if ([result isKindOfClass:[NSDictionary class]] && INT_VAL([result objectForKey:@"status"]) == API_UNAUTHORIZED) {
         if ([self authentication]) {
             if ([method isEqual:@"Get"]) {

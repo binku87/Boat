@@ -14,5 +14,6 @@
 @property (nonatomic) Drawer *btDrawer;
 
 - (id) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier styleFile:(NSString *)styleFile;
+- (UIView *) cellView;
 
 @end

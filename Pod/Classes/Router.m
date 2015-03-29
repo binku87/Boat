@@ -17,7 +17,12 @@ static NSString *_currentContentController = nil;
 
 @implementation Router
 
-+ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *) params
++ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *)params
+{
+    [self redirectTo:viewControllerName params:params animation:nil];
+}
+
++ (void) redirectTo:(NSString *)viewControllerName params:(NSDictionary *)params animation:(NSString *)animation
 {
     _currentContentController = viewControllerName;
     if (params == nil) {
@@ -25,24 +30,28 @@ static NSString *_currentContentController = nil;
     }
     BoatLayoutController *layoutController;
     BoatViewController *contentController = [Router controllerByName:viewControllerName];
+    contentController.params = [NSMutableDictionary dictionaryWithDictionary:params];
     NSString *layoutName = @"";
     if ([contentController respondsToSelector:@selector(layoutName)]) {
         layoutName = [contentController layoutName];
     }
     if ([layoutName isEqual:@""]) {
         [[self mainWindow] bringSubviewToFront:contentController.view];
-        [contentController refreshView:params];
+        if ([contentController beforeFilter]) {
+            [contentController doAction];
+        }
     } else {
         layoutController = (BoatLayoutController *)[Router controllerByName:layoutName];
-        NSMutableDictionary *combineParams = [NSMutableDictionary dictionaryWithDictionary:params];
         [[self mainWindow] bringSubviewToFront:layoutController.view];
-        [layoutController switchToView:contentController.view];
-        if ([contentController respondsToSelector:@selector(refreshView:)]) {
-            [contentController refreshView:combineParams];
+        [layoutController switchToView:contentController.view animation:animation];
+        if ([contentController beforeFilter]) {
+            [contentController doAction];
         }
-        [combineParams addEntriesFromDictionary:[contentController layoutExtraParams]];
-        [layoutController refreshView:combineParams];
+        layoutController.params = contentController.params;
+        [layoutController doAction];
     }
+    
+    NSLog(@"\n  Redirect to: %@ \n  Params: %@", viewControllerName, params);
 }
 
 + (BoatViewController *) controllerByName:(NSString *) viewControllerName
@@ -73,6 +82,11 @@ static NSString *_currentContentController = nil;
 + (NSString *)currentContentController
 {
     return _currentContentController;
+}
+
++ (BOOL)isControllerLoaded:(NSString*)controllerName
+{
+    return [_loadedControllers objectForKey:[NSString stringWithFormat:@"%@Controller", controllerName]] != nil;
 }
 
 + (UIWindow *) mainWindow

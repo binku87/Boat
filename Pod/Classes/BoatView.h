@@ -17,5 +17,8 @@
 - (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile;
 - (id) initWithFrame:(CGRect)frame styleFile:(NSString *)styleFile controller:(id)ctrl;
 - (id) initWithFrame:(CGRect)frame controller:(id)ctrl;
+- (void)panBackTo:(NSString*)controllerName params:(NSDictionary*)params;
+-(void)offsetFrame:(float)x y:(float)y width:(float)width height:(float)height;
+-(void)offsetFrame:(float)x y:(float)y width:(float)width height:(float)height animationDuration:(float)duration;
 
 @end

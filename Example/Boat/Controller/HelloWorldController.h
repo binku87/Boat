@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
-#import <Boat/BoatControllerProtocol.h>
+#import <Boat/BoatViewController.h>
 
-@interface HelloWorldController : UIViewController<BoatControllerProtocol>
+@interface HelloWorldController : BoatViewController
 
 @end
 
